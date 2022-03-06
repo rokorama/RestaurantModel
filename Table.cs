@@ -8,14 +8,19 @@ namespace RestaurantModel
         public int Number;
         public int Seats;
         public bool IsOccupied;
-        public List<MenuItem> Orders;
+        public List<Order> Orders;
 
         public Table(int number, int seats)
         {
             Number = number;
-            Seats = seats;
+            Seats = seats;  
             IsOccupied = false;
-            Orders = new List<MenuItem>();
+            Orders = new List<Order>();
+        }
+
+        public void AddOrder()
+        {
+            Orders.Add(new Order());
         }
 }
 

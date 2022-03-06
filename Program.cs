@@ -6,7 +6,7 @@ namespace RestaurantModel
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var testInterface = new RestaurantInterface();
         }
     }
 }

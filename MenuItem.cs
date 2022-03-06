@@ -6,5 +6,11 @@ namespace RestaurantModel
     {
         public string Name;
         public decimal Price;
+
+        public MenuItem(string name, decimal price)
+        {
+            Name = name;
+            Price = price;
+        }
     }
 }
