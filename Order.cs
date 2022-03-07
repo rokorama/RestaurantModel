@@ -11,10 +11,18 @@ namespace RestaurantModel
         public DateTime OrderFinishDate;
         public decimal OrderTotal;
 
-        public Order()
+        public Order(Table table)
         {
+            Table = table;
+            table.IsOccupied = true;
+
             OrderedItems = new List<MenuItem>();
             OrderStartDate = DateTime.Now;
+        }
+
+        public void AddItemToOrder(MenuItem entry)
+        {
+            OrderedItems.Add(entry);
         }
     }
 }

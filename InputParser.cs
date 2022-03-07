@@ -19,7 +19,7 @@ namespace RestaurantModel
                 return Convert.ToInt32(Char.GetNumericValue(selection));
         }
 
-        public static char PromptCharFromUser(List<char> acceptableValues)
+        public static char PromptCharFromUser(params char[] acceptableValues)
         {
             bool validInput = false;
             char selection = ' ';
@@ -28,7 +28,10 @@ namespace RestaurantModel
             {
                 Console.Write(">>> ");
                 selection = Console.ReadKey().KeyChar;
-                if (!acceptableValues.Contains(selection))
+                if (Char.IsLetter(selection))
+                    selection = Char.ToUpper(selection);
+                var selectionIndex = Array.FindIndex(acceptableValues, x => x == selection);
+                if (selectionIndex == -1)
                     Console.WriteLine("\n\nSorry, invalid input. Please try again!");
                 else
                     validInput = true;

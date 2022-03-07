@@ -15,12 +15,13 @@ namespace RestaurantModel
             Number = number;
             Seats = seats;  
             IsOccupied = false;
-            Orders = new List<Order>();
+            // Orders = new List<Order>(); ???? do i need this
         }
 
         public void AddOrder()
         {
-            Orders.Add(new Order());
+            // Orders.Add(new Order()); ??????
+            IsOccupied = true;
         }
 }
 

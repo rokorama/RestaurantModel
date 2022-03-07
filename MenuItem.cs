@@ -12,5 +12,10 @@ namespace RestaurantModel
             Name = name;
             Price = price;
         }
+
+        public override string ToString()
+        {
+            return $"{Name}\t\t\t{Price}";
+        }
     }
 }
