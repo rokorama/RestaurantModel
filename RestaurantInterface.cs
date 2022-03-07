@@ -22,7 +22,6 @@ namespace RestaurantModel
 
         public void HomeMenu()
         {
-            //acceptable values go here
             Console.Clear();
             Console.WriteLine("\n\nEnter 1 to start a new order");
             Console.WriteLine("      2 to manage existing orders");
@@ -34,7 +33,7 @@ namespace RestaurantModel
             if (selection == '1')
                 StartNewOrder(RestaurantTables);
             else if (selection == '2')
-                PrintAllTables(RestaurantTables, 1);
+                TableManagementMenu(RestaurantTables);
             else if (selection == '3')
                 PrintAllTables(RestaurantTables, 1);
             else if (selection == '4')
@@ -46,43 +45,33 @@ namespace RestaurantModel
             }
         }
 
-        public void PrintAllTables(List<Table> tables, int pageNumber)
+        public void PrintAllTables(List<Table> tables, int pageNumber = 1)
         {
             var page = Page<Table>.GetPage(true, tables, pageNumber);
             Console.Clear();
-            Console.Write($"Table\tSeats\tStatus\n\n");
+            Console.Write($"Table\tSeats\tActive order\n\n");
             page.ForEach(table =>
-                Console.WriteLine($"{table.Number}\t{table.Seats}\t{(table.IsOccupied ? "occupied" : "available")}"));
+                Console.WriteLine($"{table.Number}\t{table.Seats}\t{(table.IsOccupied ? "yes" : "no")}"));
         }
 
         public void StartNewOrder(List<Table> tables)
         {
             Table selectedTable = default;
             Order startedOrder = default;
-            PrintAllTables(tables, 1);
             Console.WriteLine("\nSelect a vacant table to start a new order, or press B to go back.");
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
-                char selection = InputParser.PromptCharFromUser();
-                if (selection == 'B')
-                    HomeMenu();
-                try
+                selectedTable = TableSelectionMenu(RestaurantTables);
+                if (!selectedTable.IsOccupied)
                 {
-                    selectedTable = tables[InputParser.GetIntFromChar(selection) - 1];
-                    if (!selectedTable.IsOccupied)
-                    {
-                        startedOrder = new Order(selectedTable);
-                        ValidSelectionMade = true;
-                    }
-                    else
-                        Console.WriteLine("This table is occupied, please select another one.");
-                        Console.ReadKey();
+                    startedOrder = selectedTable.AddOrder();
+                    ValidSelectionMade = true;
                 }
-                catch (ArgumentOutOfRangeException)
-                {
-                    Console.WriteLine("Invalid selection, please try again.\n");
-                    InputParser.PromptForAnyKey();
+                else
+                {  
+                    Console.WriteLine("\n\nError - this table is occupied, please select another one.");
+                    Console.ReadKey();
                 }
             }
             Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now?");
@@ -95,40 +84,85 @@ namespace RestaurantModel
                 HomeMenu();
         }
 
-        public void ManageTables(List<Table> tables)
+        public void TableManagementMenu(List<Table> tables)
         {
-            
+            Console.Clear();
+            Console.WriteLine("Please choose a table:");
+            var selectedTable = TableSelectionMenu(RestaurantTables);
+            Console.WriteLine("\nChoose an action from the options below:\n");
+            Console.Write("Press A to add an item to the order");
+            Console.Write("      R to remove an item to the order");
+            Console.Write("      F to finish the order and print receipts");
+            var selection = InputParser.PromptCharFromUser(new char[] {'A', 'R', 'F'});
+            if (selection == 'A') 
+            {
+                OrderAdditionMenu(selectedTable.ActiveOrder);
+            }
+            else if (selection == 'R') // refactor into ItemRemovalMenu()?
+            {
+                Page<MenuItem>.GetPage(true, selectedTable.ActiveOrder.OrderedItems);
+                var itemToRemove = selectedTable.ActiveOrder.SelectItem();
+                selectedTable.ActiveOrder.OrderedItems.Remove(itemToRemove);
+            }
+            else if (selection == 'F')
+            {
+                FinaliseOrder(selectedTable.ActiveOrder);
+            }
+        }
+
+        public Table TableSelectionMenu(List<Table> tables)
+        {
+            PrintAllTables(RestaurantTables);
+            Table resultTable = default;
+            bool ValidSelectionMade = false;
+            while (!ValidSelectionMade)
+            {
+                char selection = InputParser.PromptCharFromUser();
+                if (selection == 'B')
+                    HomeMenu();
+                try
+                {
+                    resultTable = tables[InputParser.GetIntFromChar(selection) - 1];
+                    ValidSelectionMade = true;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Console.WriteLine("Invalid selection, please try again.\n");
+                    InputParser.PromptForAnyKey();
+                }
+            }
+            return resultTable;
         }
 
         public void OrderAdditionMenu(Order targetOrder)
         {
+            List<MenuItem> page = null;
+
+            Console.Clear();
             Console.WriteLine("Select menu category:\n");
             Console.WriteLine("Press 1 for food");
             Console.WriteLine("      2 for drinks\n");
             Console.WriteLine("      B to go back");
+
             var menuCategoryAnswer = InputParser.PromptCharFromUser(new char[] {'1', '2', 'B'});
-            if (menuCategoryAnswer == '1')
-                {
-                    var page = Page<MenuItem>.GetPage(true, FoodItems);
-                    var selectionIndex = InputParser.PromptIntFromUser() - 1; //add check for acceptable values
-                    var selectedItem = page[selectionIndex];
-                    targetOrder.AddItemToOrder(selectedItem);
-                    Console.WriteLine($"{selectedItem.Name} has been added to the order. Press any key to return to the item menu.");
-                    InputParser.PromptForAnyKey();
-                    OrderAdditionMenu(targetOrder);
-                }
-            else if (menuCategoryAnswer == '2')
-                {
-                    var page = Page<MenuItem>.GetPage(true, DrinkItems);
-                    var selectionIndex = InputParser.PromptIntFromUser() - 1; //add check for acceptable values
-                    var selectedItem = page[selectionIndex];
-                    targetOrder.AddItemToOrder(selectedItem);
-                    Console.WriteLine($"{selectedItem.Name} has been added to the order. Press any key to return to the item menu.");
-                    InputParser.PromptForAnyKey();
-                    OrderAdditionMenu(targetOrder);
-                }
-            else if (menuCategoryAnswer == 'B')
+            if (menuCategoryAnswer == 'B')
                 HomeMenu();
+            else if (menuCategoryAnswer == '1')
+                page = Page<MenuItem>.GetPage(true, FoodItems);
+            else if (menuCategoryAnswer == '2')
+                page = Page<MenuItem>.GetPage(true, DrinkItems);
+            var selectionIndex = InputParser.PromptIntFromUser() - 1; //add check for acceptable values
+            var selectedItem = page[selectionIndex];
+            targetOrder.AddItemToOrder(selectedItem);
+            Console.WriteLine($"{selectedItem.Name} has been added to the table's order. Press any key to return to the item menu.");
+            InputParser.PromptForAnyKey();
+            OrderAdditionMenu(targetOrder);
+        }
+
+        public void FinaliseOrder(Order orderToFinalise)
+        {
+            Console.WriteLine("order finalising goes here");
+            orderToFinalise.Table.IsOccupied = false;
         }
 
         public void ViewOrderHistory()
@@ -139,10 +173,10 @@ namespace RestaurantModel
 }
 
 // start new order
-    // print tables & status and ask to select a free one
+    // print tables & status and ask to select a free one -- DONE
 // manage orders
-    // add items to order
-    // remove item
+    // add items to order -- DONE
+    // remove item -- DONE (kinda)
     // finish order
 // view tables
     // all table stats & order start date

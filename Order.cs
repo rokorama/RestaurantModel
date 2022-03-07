@@ -24,5 +24,11 @@ namespace RestaurantModel
         {
             OrderedItems.Add(entry);
         }
+
+        public MenuItem SelectItem()
+        {
+            var selection = InputParser.PromptIntFromUser() - 1;
+            return OrderedItems[selection];
+        }
     }
 }
