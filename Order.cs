@@ -5,15 +5,15 @@ namespace RestaurantModel
 {
     public class Order
     {
-        public Table Table;
+        public Table OrderTable;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
         public DateTime OrderFinishDate;
-        public decimal OrderTotal;
+        public decimal OrderTotalPrice;
 
         public Order(Table table)
         {
-            Table = table;
+            OrderTable = table;
             table.IsOccupied = true;
 
             OrderedItems = new List<MenuItem>();
@@ -23,12 +23,19 @@ namespace RestaurantModel
         public void AddItemToOrder(MenuItem entry)
         {
             OrderedItems.Add(entry);
+            OrderTotalPrice += entry.Price;
         }
 
         public MenuItem SelectItem()
         {
             var selection = InputParser.PromptIntFromUser() - 1;
             return OrderedItems[selection];
+        }
+
+        public void FinaliseOrder()
+        {
+            OrderTable.IsOccupied = true;
+            
         }
     }
 }

@@ -14,9 +14,15 @@ namespace RestaurantModel
 
         public static int PromptIntFromUser()
         {
-                Console.Write(">>> ");
-                var selection = Console.ReadKey().KeyChar;
-                return Convert.ToInt32(Char.GetNumericValue(selection));
+                bool validInput = false;
+                int result = 0;
+                while (!validInput)
+                {
+                    var selection = PromptCharFromUser();
+                    result = Convert.ToInt32(Char.GetNumericValue(selection));
+                    validInput = (result != -1);
+                }
+                return result;
         }
 
         public static char PromptCharFromUser(params char[] acceptableValues)
@@ -37,6 +43,28 @@ namespace RestaurantModel
                     validInput = true;
             }
             return selection;
+        }
+
+        public static bool PromptForYesOrNo()
+        {
+            var result = PromptCharFromUser(new char[] {'Y', 'N'});
+            if (result == 'Y')
+                return true;
+            else
+                return false;
+        }
+
+        static bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public static void PromptForAnyKey()

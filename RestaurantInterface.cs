@@ -75,12 +75,9 @@ namespace RestaurantModel
                 }
             }
             Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now?");
-            var orderAdditionAnswer = InputParser.PromptCharFromUser(new char[] {'Y', 'N'});
-            if (orderAdditionAnswer == 'Y')
-            {
+            if (InputParser.PromptForYesOrNo())
                 OrderAdditionMenu(startedOrder);
-            }
-            else if (orderAdditionAnswer == 'N')
+            else 
                 HomeMenu();
         }
 
@@ -90,9 +87,9 @@ namespace RestaurantModel
             Console.WriteLine("Please choose a table:");
             var selectedTable = TableSelectionMenu(RestaurantTables);
             Console.WriteLine("\nChoose an action from the options below:\n");
-            Console.Write("Press A to add an item to the order");
-            Console.Write("      R to remove an item to the order");
-            Console.Write("      F to finish the order and print receipts");
+            Console.WriteLine("Press A to add an item to the order");
+            Console.WriteLine("      R to remove an item to the order");
+            Console.WriteLine("      F to finish the order and generate receipts");
             var selection = InputParser.PromptCharFromUser(new char[] {'A', 'R', 'F'});
             if (selection == 'A') 
             {
@@ -161,8 +158,42 @@ namespace RestaurantModel
 
         public void FinaliseOrder(Order orderToFinalise)
         {
-            Console.WriteLine("order finalising goes here");
-            orderToFinalise.Table.IsOccupied = false;
+            Console.WriteLine("\n\nFinalise this order? Press Y for yes, N for no:");
+            if (!InputParser.PromptForYesOrNo())
+                TableManagementMenu(RestaurantTables);
+            
+            Console.WriteLine("\n\nPrint client receipt?");
+            if (InputParser.PromptForYesOrNo())
+            {
+                Console.WriteLine("\n\nReceipt sent to the printer.");
+                System.Threading.Thread.Sleep(1000);
+            }
+
+            Console.WriteLine("\nDoes the client wish to get a receipt via email?");
+            bool sendEmailReceiptToClient = InputParser.PromptForYesOrNo();
+            string clientEmailAdress = null;
+            if (sendEmailReceiptToClient)
+            {
+                Console.WriteLine("\n\nEnter destination address:\n>>>");
+                clientEmailAdress = Console.ReadLine();
+            }
+
+            Console.WriteLine("\n\nSend a copy of the house receipt via email?");
+            bool sendEmailReceiptToHouse = InputParser.PromptForYesOrNo();
+            string houseEmailAdress = null;
+            if (sendEmailReceiptToHouse)
+            {
+                Console.WriteLine("\n\nEnter destination address:\n>>>");
+                houseEmailAdress = Console.ReadLine();
+            }
+
+            var generatedClientReceipt = new ClientReceipt(orderToFinalise, sendEmailReceiptToClient, clientEmailAdress);
+            var generatedHouseReceipt = new HouseReceipt(orderToFinalise, sendEmailReceiptToClient, clientEmailAdress,
+                                                                            sendEmailReceiptToHouse, houseEmailAdress);
+            orderToFinalise.OrderTable.IsOccupied = false;
+            Console.WriteLine($"Order finalised. You may now start another order at table {orderToFinalise.OrderTable.Number}.");
+            InputParser.PromptForAnyKey();
+            HomeMenu();
         }
 
         public void ViewOrderHistory()
