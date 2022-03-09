@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
@@ -46,6 +48,24 @@ namespace RestaurantModel
             }
             return result;
             }
+        }
+
+        public static List<T> LoadJsonDataToList<T>(string fileName)
+        {
+            using (StreamReader sr = new StreamReader(fileName))
+            {
+                string json = sr.ReadToEnd();
+                var items = JsonConvert.DeserializeObject<List<T>>(json);
+                if (items.Count == 0)
+                    return new List<T>();
+                else
+                    return items;
+            }
+        }
+
+        public static void WriteJsonData<T>(string fileName, List<T> jsonData)
+        {
+
         }
     }
 }

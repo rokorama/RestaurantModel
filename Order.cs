@@ -32,10 +32,14 @@ namespace RestaurantModel
             return OrderedItems[selection];
         }
 
-        public void FinaliseOrder()
+        public void FinaliseOrder(bool sendEmailReceiptToClient, string clientEmailAdress,
+                                                         bool sendEmailReceiptToHouse, string houseEmailAdress)
         {
             OrderTable.IsOccupied = true;
-            
+            var generatedClientReceipt = new ClientReceipt(this, sendEmailReceiptToClient, clientEmailAdress);
+            var generatedHouseReceipt = new HouseReceipt(this, sendEmailReceiptToClient, clientEmailAdress,
+                                                                            sendEmailReceiptToHouse, houseEmailAdress);
+            OrderTable.IsOccupied = false;       
         }
     }
 }

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
     public class HouseReceipt : IEmailable
     {
-        public Table OrderTable;
+        [JsonProperty("TableNumber")]
+        public int TableNumber;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
         public DateTime OrderFinishDate;
@@ -21,7 +23,7 @@ namespace RestaurantModel
 
         public HouseReceipt(Order orderInfo, bool emailReceiptToClient, string clientEmailAdress, bool emailReceiptToHouse, string houseEmailAdress)
         {
-            OrderTable = orderInfo.OrderTable;
+            TableNumber = orderInfo.OrderTable.Number;
             OrderedItems = orderInfo.OrderedItems;
             OrderStartDate = orderInfo.OrderStartDate;
             OrderFinishDate = orderInfo.OrderFinishDate;
@@ -34,6 +36,11 @@ namespace RestaurantModel
             HouseReceiptEmailAddress = houseEmailAdress;
 
             // TODO - add method to write data to receipt database
+        }
+
+        [JsonConstructor]
+        private HouseReceipt()
+        {
         }
 
         public void EmailReceipt()

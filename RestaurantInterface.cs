@@ -1,19 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
     public class RestaurantInterface
     {
-        private readonly string _foodDatabaseLocation = "/Users/crisc/csharp/RestaurantModel/csvData/food.csv";
-        private readonly string _drinkDatabaseLocation = "/Users/crisc/csharp/RestaurantModel/csvData/drinks.csv";
-        private readonly string _tableDatabaseLocation = "/Users/crisc/csharp/RestaurantModel/csvData/tables.csv";
+        private readonly string _foodDatabaseLocation = @"csvData/food.csv";
+        private readonly string _drinkDatabaseLocation = @"csvData/drinks.csv";
+        private readonly string _tableDatabaseLocation = @"csvData/tables.csv";
+        public HouseReceiptRepository HouseReceiptRepo;
         public List<Table> RestaurantTables;
         public List<MenuItem> FoodItems;
         public List<MenuItem> DrinkItems;
 
         public RestaurantInterface()
         {
+            HouseReceiptRepo = new HouseReceiptRepository();
             RestaurantTables = FileReaderService.GenerateTableList(_tableDatabaseLocation);
             FoodItems = FileReaderService.BuildMenuFromCSV(_foodDatabaseLocation);
             DrinkItems = FileReaderService.BuildMenuFromCSV(_drinkDatabaseLocation);
@@ -190,7 +194,11 @@ namespace RestaurantModel
             var generatedClientReceipt = new ClientReceipt(orderToFinalise, sendEmailReceiptToClient, clientEmailAdress);
             var generatedHouseReceipt = new HouseReceipt(orderToFinalise, sendEmailReceiptToClient, clientEmailAdress,
                                                                             sendEmailReceiptToHouse, houseEmailAdress);
+            
+            HouseReceiptRepo.AddRecord(generatedHouseReceipt);
+            
             orderToFinalise.OrderTable.IsOccupied = false;
+
             Console.WriteLine($"Order finalised. You may now start another order at table {orderToFinalise.OrderTable.Number}.");
             InputParser.PromptForAnyKey();
             HomeMenu();
@@ -198,7 +206,6 @@ namespace RestaurantModel
 
         public void ViewOrderHistory()
         {
-            // read HouseReceipt database
         }
     }
 }
