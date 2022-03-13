@@ -1,0 +1,38 @@
+[
+    {
+      "name": "Soup of the day",
+      "price": 3
+    },
+    {
+      "name": "Hummus with pita bread",
+      "price": 5.5
+    },
+    {
+      "name": "Caesar salad",
+      "price": 7.79
+    },
+    {
+      "name": "Grilled prawns",
+      "price": 12
+    },
+    {
+      "name": "Vegetable wrap",
+      "price": 5.9
+    },
+    {
+      "name": "Buffalo cauliflower",
+      "price": 8.89
+    },
+    {
+      "name": "Rice & tofu bowl",
+      "price": 10.6
+    },
+    {
+      "name": "Mushroom carbonara",
+      "price": 11.5
+    },
+    {
+      "name": "Pasta alla puttanesca",
+      "price": 12.3
+    }
+   ]

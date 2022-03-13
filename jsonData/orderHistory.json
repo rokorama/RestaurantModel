@@ -1,0 +1,53 @@
+{
+  "$type": "System.Collections.Generic.List`1[[RestaurantModel.HouseReceipt, RestaurantModel]], System.Private.CoreLib",
+  "$values": [
+    {
+      "TableNumber": 3,
+      "OrderedItems": [
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/food.json",
+          "Name": "Soup of the day",
+          "Price": 3.0,
+          "Type": null,
+          "DatabaseLocation": "jsonData/food.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Water (sparkling) 1000 ml",
+          "Price": 2.5,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        },
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/food.json",
+          "Name": "Soup of the day",
+          "Price": 3.0,
+          "Type": null,
+          "DatabaseLocation": "jsonData/food.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Water (sparkling) 1000 ml",
+          "Price": 2.5,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        }
+      ],
+      "OrderStartDate": "2022-03-13T13:09:28.429936+02:00",
+      "OrderFinishDate": "0001-01-01T00:00:00",
+      "OrderTotalPrice": 11.0,
+      "Type": null,
+      "DatabaseLocation": "jsonData/orderHistory.json",
+      "RevenueWithoutTax": 9.68,
+      "TaxPaid": 1.32,
+      "ClientReceiptCopySentByEmail": false,
+      "HouseReceiptCopySentByEmail": false,
+      "ClientReceiptEmailAddress": null,
+      "HouseReceiptEmailAddress": null
+    }
+  ]
+}

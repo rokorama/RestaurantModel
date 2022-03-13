@@ -1,0 +1,34 @@
+[
+    {
+      "number": 1,
+      "seats": 4
+    },
+    {
+      "number": 2,
+      "seats": 4
+    },
+    {
+      "number": 3,
+      "seats": 2
+    },
+    {
+      "number": 4,
+      "seats": 2
+    },
+    {
+      "number": 5,
+      "seats": 8
+    },
+    {
+      "number": 6,
+      "seats": 6
+    },
+    {
+      "number": 7,
+      "seats": 6
+    },
+    {
+      "number": 8,
+      "seats": 10
+    }
+   ]

@@ -1,26 +1,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
     public class RestaurantInterface
     {
-        private readonly string _foodDatabaseLocation = @"csvData/food.csv";
-        private readonly string _drinkDatabaseLocation = @"csvData/drinks.csv";
-        private readonly string _tableDatabaseLocation = @"csvData/tables.csv";
-        public HouseReceiptRepository HouseReceiptRepo;
-        public List<Table> RestaurantTables;
-        public List<MenuItem> FoodItems;
-        public List<MenuItem> DrinkItems;
+        public Repository<HouseReceipt> HouseReceiptRepo;
+        public Repository<Table> TableRepo;
+        public Repository<FoodMenuItem> FoodRepo;
+        public Repository<DrinkMenuItem> DrinksRepo;
 
         public RestaurantInterface()
         {
-            HouseReceiptRepo = new HouseReceiptRepository();
-            RestaurantTables = FileReaderService.GenerateTableList(_tableDatabaseLocation);
-            FoodItems = FileReaderService.BuildMenuFromCSV(_foodDatabaseLocation);
-            DrinkItems = FileReaderService.BuildMenuFromCSV(_drinkDatabaseLocation);
+            HouseReceiptRepo = new Repository<HouseReceipt>(new HouseReceipt());
+            TableRepo = new Repository<Table>(new Table());
+            FoodRepo = new Repository<FoodMenuItem>(new FoodMenuItem());
+            DrinksRepo = new Repository<DrinkMenuItem>(new DrinkMenuItem());
             HomeMenu();
         }
 
@@ -35,11 +33,11 @@ namespace RestaurantModel
             Console.WriteLine("Q - quit");
             char selection = InputParser.PromptCharFromUser(new char[] {'1','2','3','4','Q'});
             if (selection == '1')
-                StartNewOrder(RestaurantTables);
+                StartNewOrder(TableRepo);
             else if (selection == '2')
-                TableManagementMenu(RestaurantTables);
+                TableManagementMenu(TableRepo);
             else if (selection == '3')
-                PrintAllTables(RestaurantTables, 1);
+                PrintAllTables(TableRepo, 1);
             else if (selection == '4')
                 ViewOrderHistory();
             else if (selection == 'Q')
@@ -49,16 +47,16 @@ namespace RestaurantModel
             }
         }
 
-        public void PrintAllTables(List<Table> tables, int pageNumber = 1)
+        public void PrintAllTables(Repository<Table> tables, int pageNumber = 1)
         {
-            var page = Page<Table>.GetPage(true, tables, pageNumber);
+            var page = Page<Table>.GetPage(true, tables.Items, pageNumber);
             Console.Clear();
             Console.Write($"Table\tSeats\tActive order\n\n");
             page.ForEach(table =>
                 Console.WriteLine($"{table.Number}\t{table.Seats}\t{(table.IsOccupied ? "yes" : "no")}"));
         }
 
-        public void StartNewOrder(List<Table> tables)
+        public void StartNewOrder(Repository<Table> tables)
         {
             Table selectedTable = default;
             Order startedOrder = default;
@@ -66,7 +64,7 @@ namespace RestaurantModel
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
-                selectedTable = TableSelectionMenu(RestaurantTables);
+                selectedTable = TableSelectionMenu(tables);
                 if (!selectedTable.IsOccupied)
                 {
                     startedOrder = selectedTable.AddOrder();
@@ -85,11 +83,11 @@ namespace RestaurantModel
                 HomeMenu();
         }
 
-        public void TableManagementMenu(List<Table> tables)
+        public void TableManagementMenu(Repository<Table> tables)
         {
             Console.Clear();
             Console.WriteLine("Please choose a table:");
-            var selectedTable = TableSelectionMenu(RestaurantTables);
+            var selectedTable = TableSelectionMenu(tables);
             Console.WriteLine("\nChoose an action from the options below:\n");
             Console.WriteLine("Press A to add an item to the order");
             Console.WriteLine("      R to remove an item to the order");
@@ -111,10 +109,10 @@ namespace RestaurantModel
             }
         }
 
-        public Table TableSelectionMenu(List<Table> tables)
+        public Table TableSelectionMenu(Repository<Table> tableRepo)
         {
-            PrintAllTables(RestaurantTables);
-            Table resultTable = default;
+            PrintAllTables(tableRepo);
+            var resultTable = new Table();
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
@@ -123,7 +121,7 @@ namespace RestaurantModel
                     HomeMenu();
                 try
                 {
-                    resultTable = tables[InputParser.GetIntFromChar(selection) - 1];
+                    resultTable = (Table)TableRepo.Items[InputParser.GetIntFromChar(selection) - 1]; // TODO - what the f is this
                     ValidSelectionMade = true;
                 }
                 catch (ArgumentOutOfRangeException)
@@ -137,7 +135,7 @@ namespace RestaurantModel
 
         public void OrderAdditionMenu(Order targetOrder)
         {
-            List<MenuItem> page = null;
+            var page = new List<MenuItem>();
 
             Console.Clear();
             Console.WriteLine("Select menu category:\n");
@@ -145,14 +143,17 @@ namespace RestaurantModel
             Console.WriteLine("      2 for drinks\n");
             Console.WriteLine("      B to go back");
 
+            List<MenuItem> listOfMenuItems = new List<FoodMenuItem>().Cast<MenuItem>().ToList();
+
             var menuCategoryAnswer = InputParser.PromptCharFromUser(new char[] {'1', '2', 'B'});
             if (menuCategoryAnswer == 'B')
                 HomeMenu();
             else if (menuCategoryAnswer == '1')
-                page = Page<MenuItem>.GetPage(true, FoodItems);
+                page = Page<MenuItem>.GetPage(true, FoodRepo.Items.Cast<MenuItem>().ToList());
             else if (menuCategoryAnswer == '2')
-                page = Page<MenuItem>.GetPage(true, DrinkItems);
-            var selectionIndex = InputParser.PromptIntFromUser() - 1; //add check for acceptable values
+                page = Page<MenuItem>.GetPage(true, DrinksRepo.Items.Cast<MenuItem>().ToList());               
+
+            var selectionIndex = InputParser.PromptIntFromUser() - 1; //TODO - add check for acceptable values
             var selectedItem = page[selectionIndex];
             targetOrder.AddItemToOrder(selectedItem);
             Console.WriteLine($"{selectedItem.Name} has been added to the table's order. Press any key to return to the item menu.");
@@ -160,11 +161,13 @@ namespace RestaurantModel
             OrderAdditionMenu(targetOrder);
         }
 
-        public void FinaliseOrder(Order orderToFinalise)
+        public void FinaliseOrder(Order orderToFinalise) // TODO - move into Order class
         {
             Console.WriteLine("\n\nFinalise this order? Press Y for yes, N for no:");
             if (!InputParser.PromptForYesOrNo())
-                TableManagementMenu(RestaurantTables);
+                TableManagementMenu(TableRepo);
+
+            orderToFinalise.OrderFinishDate = DateTime.Now;
             
             Console.WriteLine("\n\nPrint client receipt?");
             if (InputParser.PromptForYesOrNo())
@@ -215,10 +218,8 @@ namespace RestaurantModel
 // manage orders
     // add items to order -- DONE
     // remove item -- DONE (kinda)
-    // finish order
+    // finish order -- DONE
 // view tables
     // all table stats & order start date
 // view order history
-// quit
-
-// housereceipt also has a order start date
+// quit -- DONE

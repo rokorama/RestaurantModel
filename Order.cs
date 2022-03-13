@@ -5,6 +5,7 @@ namespace RestaurantModel
 {
     public class Order
     {
+        public string Type { get; set; }
         public Table OrderTable;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
@@ -35,7 +36,7 @@ namespace RestaurantModel
         public void FinaliseOrder(bool sendEmailReceiptToClient, string clientEmailAdress,
                                                          bool sendEmailReceiptToHouse, string houseEmailAdress)
         {
-            OrderTable.IsOccupied = true;
+            OrderFinishDate = DateTime.Now;
             var generatedClientReceipt = new ClientReceipt(this, sendEmailReceiptToClient, clientEmailAdress);
             var generatedHouseReceipt = new HouseReceipt(this, sendEmailReceiptToClient, clientEmailAdress,
                                                                             sendEmailReceiptToHouse, houseEmailAdress);

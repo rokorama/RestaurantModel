@@ -1,0 +1,70 @@
+[
+    {
+      "name": "Water (sparkling) 500 ml",
+      "price": 1.69
+    },
+    {
+      "name": "Water (sparkling) 1000 ml",
+      "price": 2.5
+    },
+    {
+      "name": "Water (still) 500 ml",
+      "price": 1.59
+    },
+    {
+      "name": "Water (still) 1000 ml",
+      "price": 2.4
+    },
+    {
+      "name": "Krušovice lager",
+      "price": 3.55
+    },
+    {
+      "name": "Krušovice dark lager",
+      "price": 3.75
+    },
+    {
+      "name": "Guinness",
+      "price": 4.7
+    },
+    {
+      "name": "Red wine (carafe)",
+      "price": 11.5
+    },
+    {
+      "name": "Red wine (glass)",
+      "price": 4
+    },
+    {
+      "name": "White wine (carafe)",
+      "price": 10
+    },
+    {
+      "name": "White wine (glass)",
+      "price": 3.5
+    },
+    {
+      "name": "Orange juice",
+      "price": 2
+    },
+    {
+      "name": "Apple juice",
+      "price": 1.5
+    },
+    {
+      "name": "Black coffee",
+      "price": 3
+    },
+    {
+      "name": "Capuccino",
+      "price": 4.3
+    },
+    {
+      "name": "Black tea",
+      "price": 2.69
+    },
+    {
+      "name": "Green tea",
+      "price": 3.19
+    }
+   ]

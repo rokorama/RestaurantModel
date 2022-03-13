@@ -4,9 +4,22 @@ using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
-    public class HouseReceipt : IEmailable
+    public class HouseReceipt : IEmailable, IFetchable
     {
-        [JsonProperty("TableNumber")]
+        public string Type { get; set; }
+        private string _databaseLocation = @"jsonData/orderHistory.json";
+        public string DatabaseLocation
+        {
+            get
+            {
+                return _databaseLocation;
+            }
+            set
+            {
+                _databaseLocation = value;
+            }   
+        }
+
         public int TableNumber;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
@@ -18,7 +31,7 @@ namespace RestaurantModel
         public bool HouseReceiptCopySentByEmail { get; set; }
         #nullable enable
         public string? ClientReceiptEmailAddress { get; set; } = null;
-        public string? HouseReceiptEmailAddress { get; set; } = null; 
+        public string? HouseReceiptEmailAddress { get; set; } = null;
         #nullable disable
 
         public HouseReceipt(Order orderInfo, bool emailReceiptToClient, string clientEmailAdress, bool emailReceiptToHouse, string houseEmailAdress)
@@ -39,7 +52,7 @@ namespace RestaurantModel
         }
 
         [JsonConstructor]
-        private HouseReceipt()
+        public HouseReceipt()
         {
         }
 
@@ -52,6 +65,11 @@ namespace RestaurantModel
         {
             return base.ToString();
             // StringBuilder here?
+        }
+
+        public List<HouseReceipt> FetchRecords<HouseReceipt>()
+        {
+            return FileReaderService.LoadJsonDataToList<HouseReceipt>(DatabaseLocation); 
         }
     }
 }

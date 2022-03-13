@@ -1,14 +1,11 @@
 using System;
-using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
-    public class MenuItem
+    abstract public class MenuItem
     {
-        [JsonProperty("Name")]
         public string Name;
 
-        [JsonProperty("Price")]
         public decimal Price;
 
         public MenuItem(string name, decimal price)
@@ -17,9 +14,9 @@ namespace RestaurantModel
             Price = price;
         }
 
-        public override string ToString()
+        protected MenuItem()
         {
-            return $"{Name}\t\t\t{Price}";
+            
         }
     }
 }
