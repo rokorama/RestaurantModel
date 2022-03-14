@@ -60,8 +60,8 @@ namespace RestaurantModel
                 selection = Console.ReadKey().KeyChar;
                 if (Char.IsLetter(selection))
                     selection = Char.ToUpper(selection);
-                var selectionIndex = validSelectionRange.Where(x => x == selection);
-                if (selectionIndex == null)
+                var selectionIndex = validSelectionRange.SingleOrDefault(x => x == selection);
+                if (selectionIndex == default(char))
                     Console.WriteLine("\n\nSorry, invalid input. Please try again!");
                 else
                     validInput = true;

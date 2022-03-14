@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace RestaurantModel
@@ -20,7 +21,8 @@ namespace RestaurantModel
             }   
         }
 
-        public int TableNumber;
+        public Guid OrderId;
+        public int OrderTable;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
         public DateTime OrderFinishDate;
@@ -36,7 +38,8 @@ namespace RestaurantModel
 
         public HouseReceipt(Order orderInfo, bool emailReceiptToClient, string clientEmailAdress, bool emailReceiptToHouse, string houseEmailAdress)
         {
-            TableNumber = orderInfo.OrderTable.Number;
+            OrderId = orderInfo.OrderId;
+            OrderTable = orderInfo.OrderTable.Number;
             OrderedItems = orderInfo.OrderedItems;
             OrderStartDate = orderInfo.OrderStartDate;
             OrderFinishDate = orderInfo.OrderFinishDate;
@@ -58,12 +61,30 @@ namespace RestaurantModel
 
         public void EmailReceipt()
         {
-            
+
         }
 
         public override string ToString()
         {
-            return base.ToString();
+            return $"ID: {OrderId} || Time: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")} || Price: {OrderTotalPrice}";
+        }
+
+        public string GetFullDetails()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Order {OrderId}");
+            sb.AppendLine();
+            sb.AppendLine($"Started at: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")}");
+            sb.AppendLine($"Finished at: {OrderFinishDate.ToString("HH:mm dd/MM/yyyy")}");
+            sb.AppendLine($"Table {OrderTable}");
+            OrderedItems.ForEach(x => sb.AppendLine(x.ToString()));
+            sb.AppendLine();
+            sb.AppendLine($"Order price: {OrderTotalPrice}");
+            sb.AppendLine();
+            sb.AppendLine($" - Value added tax (22%): {TaxPaid}");
+            sb.AppendLine($" -- House evenue, minux tax: {RevenueWithoutTax}");
+            return sb.ToString();
+            // return base.ToString();
             // StringBuilder here?
         }
 

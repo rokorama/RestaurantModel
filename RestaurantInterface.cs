@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
@@ -37,7 +35,6 @@ namespace RestaurantModel
             else if (selection == '2')
                 TableManagementMenu(TableRepo);
             else if (selection == '3')
-                // PrintAllTables(TableRepo, 1);
                 Page<Table>.SelectFromPage(TableRepo.Items, 1);
             else if (selection == '4')
                 ViewOrderHistory();
@@ -57,7 +54,9 @@ namespace RestaurantModel
             while (!ValidSelectionMade)
             {
                 selectedTable = Page<Table>.SelectFromPage(tables.Items, 1);
-                if (!selectedTable.IsOccupied)
+                if (selectedTable == null)
+                    HomeMenu();
+                else if (!selectedTable.IsOccupied)
                 {
                     startedOrder = selectedTable.AddOrder();
                     ValidSelectionMade = true;
@@ -175,6 +174,13 @@ namespace RestaurantModel
 
         public void ViewOrderHistory()
         {
+            var selectedOrder = Page<HouseReceipt>.SelectFromPage(HouseReceiptRepo.Items);
+            if (selectedOrder == null)
+                HomeMenu();
+            Console.Clear();
+            Console.WriteLine(selectedOrder.GetFullDetails());
+            Console.WriteLine("Press any key to go back.");
+            InputParser.PromptForAnyKey();
         }
     }
 }

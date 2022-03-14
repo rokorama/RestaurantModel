@@ -2,7 +2,8 @@
   "$type": "System.Collections.Generic.List`1[[RestaurantModel.HouseReceipt, RestaurantModel]], System.Private.CoreLib",
   "$values": [
     {
-      "TableNumber": 3,
+      "OrderId": "0cfcd8c7-c2f2-4c99-bfb7-5ff9544dc040",
+      "OrderTable": 0,
       "OrderedItems": [
         {
           "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
@@ -50,7 +51,8 @@
       "HouseReceiptEmailAddress": null
     },
     {
-      "TableNumber": 3,
+      "OrderId": "50fa6f9d-7e2b-4fbd-8c00-d54c5128b6e4",
+      "OrderTable": 0,
       "OrderedItems": [
         {
           "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
@@ -84,6 +86,104 @@
       "DatabaseLocation": "jsonData/orderHistory.json",
       "RevenueWithoutTax": 11.6072,
       "TaxPaid": 1.5828,
+      "ClientReceiptCopySentByEmail": false,
+      "HouseReceiptCopySentByEmail": false,
+      "ClientReceiptEmailAddress": null,
+      "HouseReceiptEmailAddress": null
+    },
+    {
+      "OrderId": "3d2cc2d4-9337-450d-a9bb-5a20f6b23b1e",
+      "OrderTable": 7,
+      "OrderedItems": [
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/food.json",
+          "Name": "Grilled prawns",
+          "Price": 12.0,
+          "Type": null,
+          "DatabaseLocation": "jsonData/food.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Krušovice dark lager",
+          "Price": 3.75,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Water (sparkling) 1000 ml",
+          "Price": 2.5,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        }
+      ],
+      "OrderStartDate": "2022-03-14T13:00:07.528868+02:00",
+      "OrderFinishDate": "2022-03-14T13:00:23.670104+02:00",
+      "OrderTotalPrice": 18.25,
+      "Type": null,
+      "DatabaseLocation": "jsonData/orderHistory.json",
+      "RevenueWithoutTax": 16.06,
+      "TaxPaid": 2.19,
+      "ClientReceiptCopySentByEmail": true,
+      "HouseReceiptCopySentByEmail": true,
+      "ClientReceiptEmailAddress": "hello@rokorama.com",
+      "HouseReceiptEmailAddress": "restoran@vagon.se"
+    },
+    {
+      "OrderId": "539ab376-c752-48f6-8a26-317694b4e13a",
+      "OrderTable": 3,
+      "OrderedItems": [
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Krušovice lager",
+          "Price": 3.55,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        },
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/food.json",
+          "Name": "Soup of the day",
+          "Price": 3.0,
+          "Type": null,
+          "DatabaseLocation": "jsonData/food.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Water (sparkling) 1000 ml",
+          "Price": 2.5,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Water (sparkling) 1000 ml",
+          "Price": 2.5,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Guinness",
+          "Price": 4.7,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        }
+      ],
+      "OrderStartDate": "2022-03-14T13:04:10.615888+02:00",
+      "OrderFinishDate": "2022-03-14T13:04:24.163891+02:00",
+      "OrderTotalPrice": 16.25,
+      "Type": null,
+      "DatabaseLocation": "jsonData/orderHistory.json",
+      "RevenueWithoutTax": 14.30,
+      "TaxPaid": 1.95,
       "ClientReceiptCopySentByEmail": false,
       "HouseReceiptCopySentByEmail": false,
       "ClientReceiptEmailAddress": null,

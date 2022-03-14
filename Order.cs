@@ -5,7 +5,8 @@ namespace RestaurantModel
 {
     public class Order
     {
-        public string Type { get; set; }
+        public Guid OrderId;
+        public string Type;
         public Table OrderTable;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
@@ -14,6 +15,7 @@ namespace RestaurantModel
 
         public Order(Table table)
         {
+            OrderId = Guid.NewGuid();
             OrderTable = table;
             table.IsOccupied = true;
 

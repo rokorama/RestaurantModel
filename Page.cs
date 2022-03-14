@@ -12,13 +12,14 @@ namespace RestaurantModel
 
         static public T SelectFromPage(List<T> list, int pageNumber = 1, int pageSize = 9)
         {
+            //include ViewOnly bool?
             var totalPages = CalculateTotalPages(list.Count);
             Console.Clear();
             PageItems = list.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             PageNumber = pageNumber;
             PageSize = pageSize;
+            Console.WriteLine($"Page {pageNumber} of {totalPages}\n");
             PageItems.ForEach(x => Console.WriteLine(x.ToString()));
-            Console.WriteLine($"\nPage {pageNumber} of {totalPages}");
             var inputPromptResult = InputParser.PromptCharFromUser(PageItems, ',', '.', 'B');
             if (Char.IsNumber(inputPromptResult))
                 return PageItems[InputParser.GetIntFromChar(inputPromptResult) - 1];
