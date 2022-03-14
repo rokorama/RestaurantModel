@@ -34,5 +34,18 @@
     {
       "name": "Pasta alla puttanesca",
       "price": 12.3
+    },
+    {
+      "name": "Focaccia sandwich with mozzarella",
+      "price": 5.50
+    },
+    {
+      "name": "Focaccia sandwich with grilled vegetables",
+      "price": 5.10
+    },
+    {
+      "name": "Koshari with tomato sauce",
+      "price": 4.50
     }
+
    ]

@@ -37,7 +37,8 @@ namespace RestaurantModel
             else if (selection == '2')
                 TableManagementMenu(TableRepo);
             else if (selection == '3')
-                PrintAllTables(TableRepo, 1);
+                // PrintAllTables(TableRepo, 1);
+                Page<Table>.SelectFromPage(TableRepo.Items, 1);
             else if (selection == '4')
                 ViewOrderHistory();
             else if (selection == 'Q')
@@ -45,15 +46,6 @@ namespace RestaurantModel
                 Console.Clear();
                 Environment.Exit(0);
             }
-        }
-
-        public void PrintAllTables(Repository<Table> tables, int pageNumber = 1)
-        {
-            var page = Page<Table>.GetPage(true, tables.Items, pageNumber);
-            Console.Clear();
-            Console.Write($"Table\tSeats\tActive order\n\n");
-            page.ForEach(table =>
-                Console.WriteLine($"{table.Number}\t{table.Seats}\t{(table.IsOccupied ? "yes" : "no")}"));
         }
 
         public void StartNewOrder(Repository<Table> tables)
@@ -64,7 +56,7 @@ namespace RestaurantModel
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
-                selectedTable = TableSelectionMenu(tables);
+                selectedTable = Page<Table>.SelectFromPage(tables.Items, 1);
                 if (!selectedTable.IsOccupied)
                 {
                     startedOrder = selectedTable.AddOrder();
@@ -87,7 +79,7 @@ namespace RestaurantModel
         {
             Console.Clear();
             Console.WriteLine("Please choose a table:");
-            var selectedTable = TableSelectionMenu(tables);
+            var selectedTable = Page<Table>.SelectFromPage(tables.Items, 1);
             Console.WriteLine("\nChoose an action from the options below:\n");
             Console.WriteLine("Press A to add an item to the order");
             Console.WriteLine("      R to remove an item to the order");
@@ -99,7 +91,7 @@ namespace RestaurantModel
             }
             else if (selection == 'R') // refactor into ItemRemovalMenu()?
             {
-                Page<MenuItem>.GetPage(true, selectedTable.ActiveOrder.OrderedItems);
+                Page<MenuItem>.SelectFromPage(selectedTable.ActiveOrder.OrderedItems);
                 var itemToRemove = selectedTable.ActiveOrder.SelectItem();
                 selectedTable.ActiveOrder.OrderedItems.Remove(itemToRemove);
             }
@@ -107,30 +99,6 @@ namespace RestaurantModel
             {
                 FinaliseOrder(selectedTable.ActiveOrder);
             }
-        }
-
-        public Table TableSelectionMenu(Repository<Table> tableRepo)
-        {
-            PrintAllTables(tableRepo);
-            var resultTable = new Table();
-            bool ValidSelectionMade = false;
-            while (!ValidSelectionMade)
-            {
-                char selection = InputParser.PromptCharFromUser();
-                if (selection == 'B')
-                    HomeMenu();
-                try
-                {
-                    resultTable = (Table)TableRepo.Items[InputParser.GetIntFromChar(selection) - 1]; // TODO - what the f is this
-                    ValidSelectionMade = true;
-                }
-                catch (ArgumentOutOfRangeException)
-                {
-                    Console.WriteLine("Invalid selection, please try again.\n");
-                    InputParser.PromptForAnyKey();
-                }
-            }
-            return resultTable;
         }
 
         public void OrderAdditionMenu(Order targetOrder)
@@ -146,15 +114,13 @@ namespace RestaurantModel
             List<MenuItem> listOfMenuItems = new List<FoodMenuItem>().Cast<MenuItem>().ToList();
 
             var menuCategoryAnswer = InputParser.PromptCharFromUser(new char[] {'1', '2', 'B'});
+            var selectedItem = default(MenuItem);
             if (menuCategoryAnswer == 'B')
                 HomeMenu();
             else if (menuCategoryAnswer == '1')
-                page = Page<MenuItem>.GetPage(true, FoodRepo.Items.Cast<MenuItem>().ToList());
+                selectedItem = Page<FoodMenuItem>.SelectFromPage(FoodRepo.Items, 1);
             else if (menuCategoryAnswer == '2')
-                page = Page<MenuItem>.GetPage(true, DrinksRepo.Items.Cast<MenuItem>().ToList());               
-
-            var selectionIndex = InputParser.PromptIntFromUser() - 1; //TODO - add check for acceptable values
-            var selectedItem = page[selectionIndex];
+                selectedItem = Page<DrinkMenuItem>.SelectFromPage(DrinksRepo.Items, 1);
             targetOrder.AddItemToOrder(selectedItem);
             Console.WriteLine($"{selectedItem.Name} has been added to the table's order. Press any key to return to the item menu.");
             InputParser.PromptForAnyKey();

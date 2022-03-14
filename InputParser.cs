@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RestaurantModel
 {
@@ -45,6 +46,29 @@ namespace RestaurantModel
             return selection;
         }
 
+        public static char PromptCharFromUser<T>(List<T> validIndexSelections, params char[] acceptableValues)
+        {
+            //rework all arrays here into list<char>
+            bool validInput = false;
+            char selection = ' ';
+            var validSelectionRange = Enumerable.Range(1, validIndexSelections.Count).ToList().ConvertAll(x => Char.Parse(x.ToString()));
+            validSelectionRange.AddRange(acceptableValues.ToList());
+
+            while (!validInput)
+            {
+                Console.Write(">>> ");
+                selection = Console.ReadKey().KeyChar;
+                if (Char.IsLetter(selection))
+                    selection = Char.ToUpper(selection);
+                var selectionIndex = validSelectionRange.Where(x => x == selection);
+                if (selectionIndex == null)
+                    Console.WriteLine("\n\nSorry, invalid input. Please try again!");
+                else
+                    validInput = true;
+            }
+            return selection;
+        }
+
         public static bool PromptForYesOrNo()
         {
             var result = PromptCharFromUser(new char[] {'Y', 'N'});
@@ -52,6 +76,12 @@ namespace RestaurantModel
                 return true;
             else
                 return false;
+        }
+
+        public static void PromptForAnyKey()
+        {
+            Console.Write(">>> ");
+            Console.ReadKey();
         }
 
         static bool IsValidEmail(string email)
@@ -67,30 +97,9 @@ namespace RestaurantModel
             }
         }
 
-        public static void PromptForAnyKey()
-        {
-            Console.Write(">>> ");
-            Console.ReadKey();
-        }
-
         public static int GetIntFromChar(char inputChar)
         {
             return Convert.ToInt32(Char.GetNumericValue(inputChar));
-        }
-
-        public static decimal PromptDecimalFromUser()
-        {
-            decimal result = 0;
-            bool valueIsValid = false;
-            while (!valueIsValid)
-            {
-            Console.Write(">>> ");
-            if (Decimal.TryParse(Console.ReadLine(), out result))
-                break;    
-            Console.Write("\nInvalid input, please try again! Hit any key to retry.");
-            Console.ReadKey();
-            }
-            return result;
         }
 
         public static List<char> AddRangeOfAcceptableValues(int list)

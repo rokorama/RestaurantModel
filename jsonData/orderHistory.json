@@ -48,6 +48,46 @@
       "HouseReceiptCopySentByEmail": false,
       "ClientReceiptEmailAddress": null,
       "HouseReceiptEmailAddress": null
+    },
+    {
+      "TableNumber": 3,
+      "OrderedItems": [
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/food.json",
+          "Name": "Caesar salad",
+          "Price": 7.79,
+          "Type": null,
+          "DatabaseLocation": "jsonData/food.json"
+        },
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/drinks.json",
+          "Name": "Water (still) 1000 ml",
+          "Price": 2.4,
+          "Type": null,
+          "DatabaseLocation": "jsonData/drinks.json"
+        },
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "_databaseLocation": "jsonData/food.json",
+          "Name": "Soup of the day",
+          "Price": 3.0,
+          "Type": null,
+          "DatabaseLocation": "jsonData/food.json"
+        }
+      ],
+      "OrderStartDate": "2022-03-14T09:55:35.522007+02:00",
+      "OrderFinishDate": "2022-03-14T09:55:46.017913+02:00",
+      "OrderTotalPrice": 13.19,
+      "Type": null,
+      "DatabaseLocation": "jsonData/orderHistory.json",
+      "RevenueWithoutTax": 11.6072,
+      "TaxPaid": 1.5828,
+      "ClientReceiptCopySentByEmail": false,
+      "HouseReceiptCopySentByEmail": false,
+      "ClientReceiptEmailAddress": null,
+      "HouseReceiptEmailAddress": null
     }
   ]
 }

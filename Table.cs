@@ -48,6 +48,11 @@ namespace RestaurantModel
         {
             return FileReaderService.LoadJsonDataToList<Table>(DatabaseLocation); 
         }
+
+        public override string ToString()
+        {
+            return $"{Number}\t{Seats}\t{(IsOccupied ? "occupied" : "vacant")}";
+        }
     }
 
 }
