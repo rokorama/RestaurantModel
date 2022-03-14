@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 
 namespace RestaurantModel
 {
@@ -23,20 +23,20 @@ namespace RestaurantModel
         public void HomeMenu()
         {
             Console.Clear();
-            Console.WriteLine("\n\nEnter 1 to start a new order");
+            Console.WriteLine();
+            Console.WriteLine($"{SettingConstants.RestaurantName} - order interface");
+            Console.WriteLine();
+            Console.WriteLine("Enter 1 to start a new order");
             Console.WriteLine("      2 to manage existing orders");
-            Console.WriteLine("      3 for table overview");
-            Console.WriteLine("      4 see order history");
-            Console.WriteLine("\n\n Other options:\n");
+            Console.WriteLine("      3 see order history");
+            Console.WriteLine();
             Console.WriteLine("Q - quit");
-            char selection = InputParser.PromptCharFromUser(new char[] {'1','2','3','4','Q'});
+            char selection = InputParser.PromptCharFromUser(new char[] {'1','2','3','Q'});
             if (selection == '1')
                 StartNewOrder(TableRepo);
             else if (selection == '2')
-                TableManagementMenu(TableRepo);
+                OrderManagementMenu(TableRepo);
             else if (selection == '3')
-                Page<Table>.SelectFromPage(TableRepo.Items, 1);
-            else if (selection == '4')
                 ViewOrderHistory();
             else if (selection == 'Q')
             {
@@ -74,29 +74,59 @@ namespace RestaurantModel
                 HomeMenu();
         }
 
-        public void TableManagementMenu(Repository<Table> tables)
+        public void OrderManagementMenu(Repository<Table> tables)
         {
             Console.Clear();
             Console.WriteLine("Please choose a table:");
             var selectedTable = Page<Table>.SelectFromPage(tables.Items, 1);
-            Console.WriteLine("\nChoose an action from the options below:\n");
+            if (selectedTable == null)
+                HomeMenu();
+            if (!selectedTable.IsOccupied)
+            {
+                    Console.WriteLine();
+                    Console.WriteLine("No active order at this table. Press any key to retry");
+                    InputParser.PromptForAnyKey();
+                    OrderManagementMenu(tables);
+            }
+            Console.Clear();
+            Console.WriteLine($"TABLE {selectedTable.Number} - MENU");
+            Console.WriteLine();
+            Console.WriteLine("Choose an action from the options below:");
+            Console.WriteLine();
             Console.WriteLine("Press A to add an item to the order");
             Console.WriteLine("      R to remove an item to the order");
             Console.WriteLine("      F to finish the order and generate receipts");
-            var selection = InputParser.PromptCharFromUser(new char[] {'A', 'R', 'F'});
+            Console.WriteLine("      V to view items ordered so far");
+            Console.WriteLine("      B to go back");
+            var selection = InputParser.PromptCharFromUser(new char[] {'A', 'R', 'F', 'V', 'B'});
             if (selection == 'A') 
             {
                 OrderAdditionMenu(selectedTable.ActiveOrder);
             }
             else if (selection == 'R') // refactor into ItemRemovalMenu()?
             {
-                Page<MenuItem>.SelectFromPage(selectedTable.ActiveOrder.OrderedItems);
-                var itemToRemove = selectedTable.ActiveOrder.SelectItem();
+                var itemToRemove = Page<MenuItem>.SelectFromPage(selectedTable.ActiveOrder.OrderedItems);
+                if (itemToRemove == null)
+                    OrderManagementMenu(tables);
                 selectedTable.ActiveOrder.OrderedItems.Remove(itemToRemove);
             }
             else if (selection == 'F')
             {
                 FinaliseOrder(selectedTable.ActiveOrder);
+            }
+            else if (selection == 'V')
+            {
+                Console.Clear();
+                Console.WriteLine(selectedTable.ActiveOrder.ToString());
+                Console.WriteLine();
+                Console.WriteLine("Press any key to go back");
+                InputParser.PromptForAnyKey();
+                OrderManagementMenu(tables);
+            }
+
+            else if (selection == 'B')
+            {
+                OrderManagementMenu(tables);
             }
         }
 
@@ -105,12 +135,12 @@ namespace RestaurantModel
             var page = new List<MenuItem>();
 
             Console.Clear();
-            Console.WriteLine("Select menu category:\n");
+            Console.WriteLine("Select menu category:");
+            Console.WriteLine();
             Console.WriteLine("Press 1 for food");
-            Console.WriteLine("      2 for drinks\n");
+            Console.WriteLine("      2 for drinks");
+            Console.WriteLine();
             Console.WriteLine("      B to go back");
-
-            List<MenuItem> listOfMenuItems = new List<FoodMenuItem>().Cast<MenuItem>().ToList();
 
             var menuCategoryAnswer = InputParser.PromptCharFromUser(new char[] {'1', '2', 'B'});
             var selectedItem = default(MenuItem);
@@ -120,7 +150,10 @@ namespace RestaurantModel
                 selectedItem = Page<FoodMenuItem>.SelectFromPage(FoodRepo.Items, 1);
             else if (menuCategoryAnswer == '2')
                 selectedItem = Page<DrinkMenuItem>.SelectFromPage(DrinksRepo.Items, 1);
+            if (selectedItem == null)
+                OrderAdditionMenu(targetOrder);
             targetOrder.AddItemToOrder(selectedItem);
+            Console.WriteLine();
             Console.WriteLine($"{selectedItem.Name} has been added to the table's order. Press any key to return to the item menu.");
             InputParser.PromptForAnyKey();
             OrderAdditionMenu(targetOrder);
@@ -130,7 +163,7 @@ namespace RestaurantModel
         {
             Console.WriteLine("\n\nFinalise this order? Press Y for yes, N for no:");
             if (!InputParser.PromptForYesOrNo())
-                TableManagementMenu(TableRepo);
+                OrderManagementMenu(TableRepo);
 
             orderToFinalise.OrderFinishDate = DateTime.Now;
             
@@ -193,5 +226,5 @@ namespace RestaurantModel
     // finish order -- DONE
 // view tables
     // all table stats & order start date
-// view order history
+// view order history -- DONE
 // quit -- DONE

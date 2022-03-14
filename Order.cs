@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace RestaurantModel
 {
@@ -42,6 +43,21 @@ namespace RestaurantModel
             var generatedHouseReceipt = new HouseReceipt(this, sendEmailReceiptToClient, clientEmailAdress,
                                                                             sendEmailReceiptToHouse, houseEmailAdress);
             OrderTable.IsOccupied = false;       
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Order {OrderId}");
+            sb.AppendLine();
+            sb.AppendLine($"Started at: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")}");
+            sb.AppendLine();
+            sb.AppendLine($"Table {OrderTable.Number}");
+            sb.AppendLine();
+            OrderedItems.ForEach(x => sb.AppendLine(x.ToString()));
+            sb.AppendLine();
+            sb.AppendLine($"Order price: {OrderTotalPrice}");
+            return sb.ToString();
         }
     }
 }

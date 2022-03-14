@@ -27,13 +27,14 @@ namespace RestaurantModel
         public DateTime OrderStartDate;
         public DateTime OrderFinishDate;
         public decimal OrderTotalPrice;
-        public decimal RevenueWithoutTax { get; set; }
-        public decimal TaxPaid { get; set; }
-        public bool ClientReceiptCopySentByEmail { get; set; }
-        public bool HouseReceiptCopySentByEmail { get; set; }
+        public decimal RevenueWithoutTax;
+        public decimal ValueAddedTax;
+        public decimal TaxPaid;
+        public bool ClientReceiptCopySentByEmail;
+        public bool HouseReceiptCopySentByEmail;
         #nullable enable
-        public string? ClientReceiptEmailAddress { get; set; } = null;
-        public string? HouseReceiptEmailAddress { get; set; } = null;
+        public string? ClientReceiptEmailAddress = null;
+        public string? HouseReceiptEmailAddress = null;
         #nullable disable
 
         public HouseReceipt(Order orderInfo, bool emailReceiptToClient, string clientEmailAdress, bool emailReceiptToHouse, string houseEmailAdress)
@@ -44,14 +45,13 @@ namespace RestaurantModel
             OrderStartDate = orderInfo.OrderStartDate;
             OrderFinishDate = orderInfo.OrderFinishDate;
             OrderTotalPrice = orderInfo.OrderTotalPrice;
-            RevenueWithoutTax = (OrderTotalPrice * 88) / 100;
-            TaxPaid = OrderTotalPrice - RevenueWithoutTax;
+            ValueAddedTax = SettingConstants.ValueAddedTax;
+            TaxPaid = (OrderTotalPrice * ValueAddedTax) / 100;
+            RevenueWithoutTax = OrderTotalPrice - TaxPaid;
             ClientReceiptCopySentByEmail = emailReceiptToClient;
             ClientReceiptEmailAddress = clientEmailAdress;
             HouseReceiptCopySentByEmail = emailReceiptToHouse;
             HouseReceiptEmailAddress = houseEmailAdress;
-
-            // TODO - add method to write data to receipt database
         }
 
         [JsonConstructor]
@@ -81,11 +81,9 @@ namespace RestaurantModel
             sb.AppendLine();
             sb.AppendLine($"Order price: {OrderTotalPrice}");
             sb.AppendLine();
-            sb.AppendLine($" - Value added tax (22%): {TaxPaid}");
-            sb.AppendLine($" -- House evenue, minux tax: {RevenueWithoutTax}");
+            sb.AppendLine($" - Value added tax ({SettingConstants.ValueAddedTax}%): {TaxPaid}");
+            sb.AppendLine($" - House evenue, minus tax: {RevenueWithoutTax}");
             return sb.ToString();
-            // return base.ToString();
-            // StringBuilder here?
         }
 
         public List<HouseReceipt> FetchRecords<HouseReceipt>()

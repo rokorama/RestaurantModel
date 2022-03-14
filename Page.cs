@@ -12,7 +12,6 @@ namespace RestaurantModel
 
         static public T SelectFromPage(List<T> list, int pageNumber = 1, int pageSize = 9)
         {
-            //include ViewOnly bool?
             var totalPages = CalculateTotalPages(list.Count);
             Console.Clear();
             PageItems = list.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
@@ -20,6 +19,16 @@ namespace RestaurantModel
             PageSize = pageSize;
             Console.WriteLine($"Page {pageNumber} of {totalPages}\n");
             PageItems.ForEach(x => Console.WriteLine(x.ToString()));
+            Console.WriteLine();
+
+            Console.WriteLine("Press the number of the item you wish to select");
+            if (pageNumber != 1 && totalPages > 1)
+                Console.WriteLine("Press , to see previous page");
+            if (pageNumber < totalPages)
+                Console.WriteLine("Press . to see next page");
+            Console.WriteLine("Press B to go back");
+            Console.WriteLine();
+
             var inputPromptResult = InputParser.PromptCharFromUser(PageItems, ',', '.', 'B');
             if (Char.IsNumber(inputPromptResult))
                 return PageItems[InputParser.GetIntFromChar(inputPromptResult) - 1];

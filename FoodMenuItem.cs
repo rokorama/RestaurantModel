@@ -37,7 +37,7 @@ namespace RestaurantModel
 
         public override string ToString()
         {
-            return $"{Name}\t\t\t{Price}";
+            return String.Format(SettingConstants.MenuItemSpacing, Name, Price.ToString("0.00"));
         }
     }
 }
