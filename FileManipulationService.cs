@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
-    static public class FileReaderService
+    static public class FileManipulationService
     {
         static public void WriteJsonData<T>(string databaseLocation, List<T> updatedData)
         {

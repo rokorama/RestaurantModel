@@ -38,7 +38,7 @@ namespace RestaurantModel
 
         public List<DrinkMenuItem> FetchRecords<DrinkMenuItem>()
         {
-            return FileReaderService.LoadJsonDataToList<DrinkMenuItem>(DatabaseLocation); 
+            return FileManipulationService.LoadJsonDataToList<DrinkMenuItem>(DatabaseLocation); 
         }     
 
         public override string ToString()

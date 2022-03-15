@@ -53,7 +53,7 @@ namespace RestaurantModel
 
         public List<Table> FetchRecords<Table>()
         {
-            return FileReaderService.LoadJsonDataToList<Table>(DatabaseLocation); 
+            return FileManipulationService.LoadJsonDataToList<Table>(DatabaseLocation); 
         }
 
         public override string ToString()

@@ -103,7 +103,7 @@ namespace RestaurantModel
 
         public List<HouseReceipt> FetchRecords<HouseReceipt>()
         {
-            return FileReaderService.LoadJsonDataToList<HouseReceipt>(DatabaseLocation); 
+            return FileManipulationService.LoadJsonDataToList<HouseReceipt>(DatabaseLocation); 
         }     
 
         public override string ToString()

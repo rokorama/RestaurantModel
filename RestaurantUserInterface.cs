@@ -49,7 +49,7 @@ namespace RestaurantModel
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
-                selectedTable = Page<Table>.PageMenu(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
+                selectedTable = Page<Table>.PageNavigationInterface(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
                 if (selectedTable == null)
                     HomeMenu();
                 else if (!selectedTable.IsOccupied)
@@ -73,7 +73,7 @@ namespace RestaurantModel
         public void OrderManagementMenu(Repository<Table> tables)
         {
             var displayMessage = "Please choose a table:";
-            var selectedTable = Page<Table>.PageMenu(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
+            var selectedTable = Page<Table>.PageNavigationInterface(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
             if (selectedTable == null)
                 HomeMenu();
             if (!selectedTable.IsOccupied)
@@ -100,7 +100,7 @@ namespace RestaurantModel
             }
             else if (selection == 'R') // refactor into ItemRemovalMenu()?
             {
-                var itemToRemove = Page<MenuItem>.PageMenu(selectedTable.ActiveOrder.OrderedItems);
+                var itemToRemove = Page<MenuItem>.PageNavigationInterface(selectedTable.ActiveOrder.OrderedItems);
                 if (itemToRemove == null)
                     OrderManagementMenu(tables);
                 selectedTable.ActiveOrder.OrderedItems.Remove(itemToRemove);
@@ -142,9 +142,9 @@ namespace RestaurantModel
             if (menuCategoryAnswer == 'B')
                 HomeMenu();
             else if (menuCategoryAnswer == '1')
-                selectedItem = Page<FoodMenuItem>.PageMenu(FoodRepo.Items, displayMessage, FoodMenuItem.PageMenuHeaders);
+                selectedItem = Page<FoodMenuItem>.PageNavigationInterface(FoodRepo.Items, displayMessage, FoodMenuItem.PageMenuHeaders);
             else if (menuCategoryAnswer == '2')
-                selectedItem = Page<DrinkMenuItem>.PageMenu(DrinksRepo.Items, displayMessage, DrinkMenuItem.PageMenuHeaders);
+                selectedItem = Page<DrinkMenuItem>.PageNavigationInterface(DrinksRepo.Items, displayMessage, DrinkMenuItem.PageMenuHeaders);
             if (selectedItem == null)
                 OrderAdditionMenu(targetOrder);
             targetOrder.AddItemToOrder(selectedItem);
@@ -160,8 +160,6 @@ namespace RestaurantModel
             if (!InputParser.PromptForYesOrNo())
                 OrderManagementMenu(TableRepo);
 
-            orderToFinalise.OrderFinishDate = DateTime.Now;
-            
             Console.WriteLine("\n\nPrint client receipt?");
             if (InputParser.PromptForYesOrNo())
             {
@@ -194,7 +192,7 @@ namespace RestaurantModel
 
         public void ViewOrderHistory()
         {
-            var selectedOrder = Page<HouseReceipt>.PageMenu(HouseReceiptRepo.Items);
+            var selectedOrder = Page<HouseReceipt>.PageNavigationInterface(HouseReceiptRepo.Items);
             if (selectedOrder == null)
                 HomeMenu();
             Console.Clear();
@@ -211,7 +209,6 @@ namespace RestaurantModel
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("Do you wish to exit the program? (Y/N)");
-            Console.WriteLine();
             if (InputParser.PromptForYesOrNo())
             {
                 Console.Clear();

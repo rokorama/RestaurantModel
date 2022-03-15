@@ -23,7 +23,7 @@ namespace RestaurantModel
                                              .GetProperties()
                                              .Single(x => x.Name == "DatabaseLocation")
                                              .GetValue("DatabaseLocation");
-            FileReaderService.WriteJsonData(dbLocation, Items);
+            FileManipulationService.WriteJsonData(dbLocation, Items);
         }
 
         public List<T> LoadRecords(IFetchable objectCategory)

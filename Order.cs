@@ -42,6 +42,7 @@ namespace RestaurantModel
                                   string houseEmailAdress,
                                   Repository<HouseReceipt> receiptRepo)
         {
+            OrderFinishDate = DateTime.Now;
             var generatedClientReceipt = new ClientReceipt(this, sendEmailReceiptToClient, clientEmailAdress);
             var generatedHouseReceipt = new HouseReceipt(this, sendEmailReceiptToClient, clientEmailAdress,
                                                                             sendEmailReceiptToHouse, houseEmailAdress);
