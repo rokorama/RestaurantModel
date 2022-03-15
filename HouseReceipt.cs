@@ -11,7 +11,7 @@ namespace RestaurantModel
         [JsonIgnore]
         static public string DatabaseLocation
         {
-            get { return SettingConstants.DrinkItemDatabaseLocation; }
+            get { return SettingConstants.HouseReceiptDatabaseLocation; }
             set { }   
         }
         [JsonIgnore]
@@ -23,7 +23,7 @@ namespace RestaurantModel
         [JsonIgnore]
         static public string PageMenuSpacing
         {
-            get { return "{0,-30} {1,10} {2,10}"; }
+            get { return "{0,-43} {1,-16} {2,10}"; }
             set { }
         }
 
@@ -94,7 +94,11 @@ namespace RestaurantModel
 
         public override string ToString()
         {
-            return $"{OrderId},{OrderStartDate.ToString("HH:mm dd/MM/yyyy")},{OrderTotalPrice}";
+
+            return String.Format(PageMenuSpacing,
+                                 OrderId, 
+                                 OrderStartDate.ToString("HH:mm dd/MM/yyyy"),
+                                 OrderTotalPrice.ToString("0.00"));
         }
     }
 }

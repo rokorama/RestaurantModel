@@ -3,14 +3,14 @@ using System.Collections.Generic;
 
 namespace RestaurantModel
 {
-    public class RestaurantInterface
+    public class RestaurantUserInterface
     {
         public Repository<HouseReceipt> HouseReceiptRepo;
         public Repository<Table> TableRepo;
         public Repository<FoodMenuItem> FoodRepo;
         public Repository<DrinkMenuItem> DrinksRepo;
 
-        public RestaurantInterface()
+        public RestaurantUserInterface()
         {
             HouseReceiptRepo = new Repository<HouseReceipt>(new HouseReceipt());
             TableRepo = new Repository<Table>(new Table());

@@ -44,7 +44,7 @@ namespace RestaurantModel
 
         public override string ToString()
         {
-            return $"{Name} {Price.ToString("0.00")}";
+            return String.Format(PageMenuSpacing, Name, Price.ToString("0.00"));
         }
 
         public Type GetType<T>()

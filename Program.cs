@@ -7,7 +7,7 @@ namespace RestaurantModel
     {
         static void Main(string[] args)
         {
-            var testInterface = new RestaurantInterface();
+            var testInterface = new RestaurantUserInterface();
         }
     }
 }
