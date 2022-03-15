@@ -48,7 +48,6 @@ namespace RestaurantModel
 
         public static char PromptCharFromUser<T>(List<T> validIndexSelections, params char[] acceptableValues)
         {
-            //rework all arrays here into list<char>
             bool validInput = false;
             char selection = ' ';
             var validSelectionRange = Enumerable.Range(1, validIndexSelections.Count).ToList().ConvertAll(x => Char.Parse(x.ToString()));
@@ -69,9 +68,33 @@ namespace RestaurantModel
             return selection;
         }
 
+        public static string PromptForEmailAddress()
+        {
+            bool ValidEmailEntered = false;
+            string resultEmail = default;
+            while (!ValidEmailEntered)
+            {
+                Console.WriteLine();
+                Console.WriteLine("Please enter email address (leave empty to skip)");
+                Console.Write(">>> ");
+                var userEmailInput = Console.ReadLine().Trim();
+                if (userEmailInput == "")
+                    return null;
+                if (!IsValidEmail(userEmailInput))
+                    Console.WriteLine("Email is not in a valid format. Please doublecheck it and try again.");
+                else 
+                {
+                    resultEmail = userEmailInput;
+                    ValidEmailEntered = true;
+                }
+            }
+            return resultEmail;
+        }
+
         public static bool PromptForYesOrNo()
         {
             var result = PromptCharFromUser(new char[] {'Y', 'N'});
+            Console.WriteLine();
             if (result == 'Y')
                 return true;
             else

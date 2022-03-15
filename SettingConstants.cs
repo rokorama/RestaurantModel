@@ -5,7 +5,7 @@ namespace RestaurantModel
     public class SettingConstants
     {
         // Interface menu formatting
-        internal const string RestaurantName = "La Maison de C# Advanced";
+        internal const string RestaurantName = "Restaurant 'Chez Test'";
 
         // Day-to-day operation settings
         internal const int ValueAddedTax = 22; // in percent

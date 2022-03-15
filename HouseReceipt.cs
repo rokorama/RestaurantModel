@@ -35,8 +35,8 @@ namespace RestaurantModel
         public decimal RevenueWithoutTax;
         public decimal ValueAddedTax;
         public decimal TaxPaid;
-        public bool ClientReceiptCopySentByEmail;
-        public bool HouseReceiptCopySentByEmail;
+        public bool SendClientReceiptByEmail;
+        public bool SendHouseReceiptByEmail;
         #nullable enable
         public string? ClientReceiptEmailAddress = null;
         public string? HouseReceiptEmailAddress = null;
@@ -53,10 +53,13 @@ namespace RestaurantModel
             ValueAddedTax = SettingConstants.ValueAddedTax;
             TaxPaid = (OrderTotalPrice * ValueAddedTax) / 100;
             RevenueWithoutTax = OrderTotalPrice - TaxPaid;
-            ClientReceiptCopySentByEmail = emailReceiptToClient;
+            SendClientReceiptByEmail = emailReceiptToClient;
             ClientReceiptEmailAddress = clientEmailAdress;
-            HouseReceiptCopySentByEmail = emailReceiptToHouse;
+            SendHouseReceiptByEmail = emailReceiptToHouse;
             HouseReceiptEmailAddress = houseEmailAdress;
+
+            if (SendHouseReceiptByEmail)
+                EmailReceipt();
         }
 
         [JsonConstructor]
@@ -66,7 +69,18 @@ namespace RestaurantModel
 
         public void EmailReceipt()
         {
+            StringBuilder emailBody = new StringBuilder();
+            emailBody.AppendLine($"<h1>Thanks for your order from {SettingConstants.RestaurantName}!</h1>");
+            emailBody.AppendLine($"<p>Order started at: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")}</p>");
+            emailBody.AppendLine($"<p>     finished at: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")}</p>");
+            emailBody.AppendLine($"<p>Table {OrderTable}</p>");
+            emailBody.AppendLine($"<p>Items ordered:</p>");
+            OrderedItems.ForEach(x => emailBody.AppendLine($"<ol>{x.ToString()}</ol"));
+            emailBody.AppendLine($"<p>Order price: {OrderTotalPrice}</p>");
+            emailBody.AppendLine($"<p> - Value added tax ({SettingConstants.ValueAddedTax}%): {TaxPaid}</p>");
+            emailBody.AppendLine($"<p> - House revenue, minus tax: {RevenueWithoutTax}</p>");
 
+            EmailSendingService.SendEmail(HouseReceiptEmailAddress, emailBody.ToString());
         }
 
         public string PrintFullDetails()
@@ -78,13 +92,12 @@ namespace RestaurantModel
             sb.AppendLine($"Finished at: {OrderFinishDate.ToString("HH:mm dd/MM/yyyy")}");
             sb.AppendLine();
             sb.AppendLine($"Table {OrderTable}");
-            sb.AppendLine();
             OrderedItems.ForEach(x => sb.AppendLine(x.ToString()));
             sb.AppendLine();
             sb.AppendLine($"Order price: {OrderTotalPrice}");
             sb.AppendLine();
             sb.AppendLine($" - Value added tax ({SettingConstants.ValueAddedTax}%): {TaxPaid}");
-            sb.AppendLine($" - House evenue, minus tax: {RevenueWithoutTax}");
+            sb.AppendLine($" - House revenue, minus tax: {RevenueWithoutTax}");
             return sb.ToString();
         }
 

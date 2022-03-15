@@ -36,13 +36,19 @@ namespace RestaurantModel
             return OrderedItems[selection];
         }
 
-        public void FinaliseOrder(bool sendEmailReceiptToClient, string clientEmailAdress,
-                                                         bool sendEmailReceiptToHouse, string houseEmailAdress)
+        public void FinaliseOrder(bool sendEmailReceiptToClient,
+                                  string clientEmailAdress,
+                                  bool sendEmailReceiptToHouse,
+                                  string houseEmailAdress,
+                                  Repository<HouseReceipt> receiptRepo)
         {
             var generatedClientReceipt = new ClientReceipt(this, sendEmailReceiptToClient, clientEmailAdress);
             var generatedHouseReceipt = new HouseReceipt(this, sendEmailReceiptToClient, clientEmailAdress,
                                                                             sendEmailReceiptToHouse, houseEmailAdress);
-            OrderTable.IsOccupied = false;       
+            receiptRepo.AddRecord(generatedHouseReceipt);
+            OrderTable.IsOccupied = false;    
+
+
         }
 
         public override string ToString()

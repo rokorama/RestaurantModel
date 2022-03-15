@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RestaurantModel
 {
@@ -15,11 +16,14 @@ namespace RestaurantModel
                 Items = new List<T>();
             }
         }
-
         public void AddRecord(T newEntry)
         {
-            Items.Add((T)newEntry);
-            FileReaderService.WriteJsonData(IFetchable.DatabaseLocation, Items);
+            Items.Add(newEntry);
+            var dbLocation = (string)newEntry.GetType()
+                                             .GetProperties()
+                                             .Single(x => x.Name == "DatabaseLocation")
+                                             .GetValue("DatabaseLocation");
+            FileReaderService.WriteJsonData(dbLocation, Items);
         }
 
         public List<T> LoadRecords(IFetchable objectCategory)

@@ -8,20 +8,32 @@ namespace RestaurantModel
 {
     static public class EmailSendingService
     {
-        static public void SendEmail(string recipientAddress)
+        static public void SendEmail(string recipientAddress, string messageBody)
         {
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(SettingConstants.MailClientUsername));
             email.To.Add(MailboxAddress.Parse(recipientAddress));
-            email.Subject = "Rokorama Fake Goods Inc. order receipt";
-            email.Body = new TextPart(TextFormat.Html) { Text = "<h1>Example HTML Message Body</h1>\n<p>Oh shit it's working</p>" };
+            email.Subject = $"Your receipt from {SettingConstants.RestaurantName}";
+            email.Body = new TextPart(TextFormat.Html) { Text = messageBody };
+
+            //add error handling throughout
 
             // send email
             using var smtp = new SmtpClient();
-            smtp.Connect(SettingConstants.MailServer, SettingConstants.MailServerPort, SecureSocketOptions.StartTls);
-            smtp.Authenticate(SettingConstants.MailClientUsername, SettingConstants.MailClientPassword);
-            smtp.Send(email);
-            smtp.Disconnect(true);
+            try
+            {
+                smtp.Connect(SettingConstants.MailServer, SettingConstants.MailServerPort, SecureSocketOptions.StartTls);
+                smtp.Authenticate(SettingConstants.MailClientUsername, SettingConstants.MailClientPassword);
+                smtp.Send(email);
+                smtp.Disconnect(true);
+
+                Console.WriteLine($"\nEmail successfully sent to {recipientAddress}\n");
+                System.Threading.Thread.Sleep(1000);
+            }
+            catch // TODO - specify exceptions
+            {
+                Console.WriteLine("Something went wrong with sending the email!");
+            }
         }
     }
 }

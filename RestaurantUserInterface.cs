@@ -38,10 +38,7 @@ namespace RestaurantModel
             else if (selection == '3')
                 ViewOrderHistory();
             else if (selection == 'Q')
-            {
-                Console.Clear();
-                Environment.Exit(0);
-            }
+                QuitProgramScreen();
         }
 
         public void StartNewOrder(Repository<Table> tables)
@@ -52,7 +49,7 @@ namespace RestaurantModel
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
-                selectedTable = Page<Table>.SelectFromPage(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
+                selectedTable = Page<Table>.PageMenu(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
                 if (selectedTable == null)
                     HomeMenu();
                 else if (!selectedTable.IsOccupied)
@@ -76,7 +73,7 @@ namespace RestaurantModel
         public void OrderManagementMenu(Repository<Table> tables)
         {
             var displayMessage = "Please choose a table:";
-            var selectedTable = Page<Table>.SelectFromPage(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
+            var selectedTable = Page<Table>.PageMenu(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
             if (selectedTable == null)
                 HomeMenu();
             if (!selectedTable.IsOccupied)
@@ -103,7 +100,7 @@ namespace RestaurantModel
             }
             else if (selection == 'R') // refactor into ItemRemovalMenu()?
             {
-                var itemToRemove = Page<MenuItem>.SelectFromPage(selectedTable.ActiveOrder.OrderedItems);
+                var itemToRemove = Page<MenuItem>.PageMenu(selectedTable.ActiveOrder.OrderedItems);
                 if (itemToRemove == null)
                     OrderManagementMenu(tables);
                 selectedTable.ActiveOrder.OrderedItems.Remove(itemToRemove);
@@ -145,9 +142,9 @@ namespace RestaurantModel
             if (menuCategoryAnswer == 'B')
                 HomeMenu();
             else if (menuCategoryAnswer == '1')
-                selectedItem = Page<FoodMenuItem>.SelectFromPage(FoodRepo.Items, displayMessage, FoodMenuItem.PageMenuHeaders);
+                selectedItem = Page<FoodMenuItem>.PageMenu(FoodRepo.Items, displayMessage, FoodMenuItem.PageMenuHeaders);
             else if (menuCategoryAnswer == '2')
-                selectedItem = Page<DrinkMenuItem>.SelectFromPage(DrinksRepo.Items, displayMessage, DrinkMenuItem.PageMenuHeaders);
+                selectedItem = Page<DrinkMenuItem>.PageMenu(DrinksRepo.Items, displayMessage, DrinkMenuItem.PageMenuHeaders);
             if (selectedItem == null)
                 OrderAdditionMenu(targetOrder);
             targetOrder.AddItemToOrder(selectedItem);
@@ -176,27 +173,19 @@ namespace RestaurantModel
             bool sendEmailReceiptToClient = InputParser.PromptForYesOrNo();
             string clientEmailAdress = null;
             if (sendEmailReceiptToClient)
-            {
-                Console.WriteLine("\n\nEnter destination address:\n>>>");
-                clientEmailAdress = Console.ReadLine();
-            }
+                clientEmailAdress = InputParser.PromptForEmailAddress();
 
             Console.WriteLine("\n\nSend a copy of the house receipt via email?");
             bool sendEmailReceiptToHouse = InputParser.PromptForYesOrNo();
             string houseEmailAdress = null;
             if (sendEmailReceiptToHouse)
-            {
-                Console.WriteLine("\n\nEnter destination address:\n>>>");
-                houseEmailAdress = Console.ReadLine();
-            }
-
-            var generatedClientReceipt = new ClientReceipt(orderToFinalise, sendEmailReceiptToClient, clientEmailAdress);
-            var generatedHouseReceipt = new HouseReceipt(orderToFinalise, sendEmailReceiptToClient, clientEmailAdress,
-                                                                            sendEmailReceiptToHouse, houseEmailAdress);
+                houseEmailAdress = InputParser.PromptForEmailAddress();
             
-            HouseReceiptRepo.AddRecord(generatedHouseReceipt);
-            
-            orderToFinalise.OrderTable.IsOccupied = false;
+            orderToFinalise.FinaliseOrder(sendEmailReceiptToClient,
+                                          clientEmailAdress, 
+                                          sendEmailReceiptToHouse, 
+                                          houseEmailAdress,
+                                          HouseReceiptRepo);
 
             Console.WriteLine($"Order finalised. You may now start another order at table {orderToFinalise.OrderTable.Number}.");
             InputParser.PromptForAnyKey();
@@ -205,7 +194,7 @@ namespace RestaurantModel
 
         public void ViewOrderHistory()
         {
-            var selectedOrder = Page<HouseReceipt>.SelectFromPage(HouseReceiptRepo.Items);
+            var selectedOrder = Page<HouseReceipt>.PageMenu(HouseReceiptRepo.Items);
             if (selectedOrder == null)
                 HomeMenu();
             Console.Clear();
@@ -213,6 +202,23 @@ namespace RestaurantModel
             Console.WriteLine("Press any key to go back.");
             InputParser.PromptForAnyKey();
             ViewOrderHistory();
+        }
+
+        public void QuitProgramScreen()
+        {
+            Console.Clear();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Do you wish to exit the program? (Y/N)");
+            Console.WriteLine();
+            if (InputParser.PromptForYesOrNo())
+            {
+                Console.Clear();
+                Environment.Exit(0);
+            }
+            else
+                HomeMenu();
         }
     }
 }
