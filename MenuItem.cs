@@ -2,7 +2,7 @@ using System;
 
 namespace RestaurantModel
 {
-    abstract public class MenuItem
+    abstract public class MenuItem : IPageDisplayable
     {
         public string Name;
 

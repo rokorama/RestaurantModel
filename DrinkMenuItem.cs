@@ -1,22 +1,29 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
-    public class DrinkMenuItem : MenuItem, IFetchable
+    public class DrinkMenuItem : MenuItem, IFetchable, IPageDisplayable
     {
         public string Type { get; set; }
-        public string _databaseLocation = @"jsonData/drinks.json";
-        public string DatabaseLocation
+        [JsonIgnore]
+        static public string DatabaseLocation
         {
-            get
-            {
-                return _databaseLocation;
-            }
-            set
-            {
-                _databaseLocation = value;
-            }   
+            get { return SettingConstants.DrinkItemDatabaseLocation; }
+            set { }   
+        }
+        [JsonIgnore]
+        static public string[] PageMenuHeaders
+        {
+            get { return new string[] {"Item name", "Price (Euros)"}; }
+            set { }
+        }
+        [JsonIgnore]
+        static public string PageMenuSpacing
+        {
+            get { return "{0,-30} {1,10}"; }
+            set { }
         }
 
         public DrinkMenuItem(string name, decimal price)
@@ -37,7 +44,12 @@ namespace RestaurantModel
 
         public override string ToString()
         {
-            return String.Format(SettingConstants.MenuItemSpacing, Name, Price.ToString("0.00"));
+            return $"{Name} {Price.ToString("0.00")}";
+        }
+
+        public Type GetType<T>()
+        {
+            return typeof(T);
         }
     }
 }

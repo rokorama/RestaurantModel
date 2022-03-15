@@ -5,7 +5,7 @@ namespace RestaurantModel
 {
     public interface IFetchable
     {
-        string DatabaseLocation { get; set; }
+        static string DatabaseLocation { get; set; }
         List<T> FetchRecords<T>();
     }
 }

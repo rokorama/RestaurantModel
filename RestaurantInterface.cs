@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace RestaurantModel
 {
@@ -49,11 +48,11 @@ namespace RestaurantModel
         {
             Table selectedTable = default;
             Order startedOrder = default;
-            Console.WriteLine("\nSelect a vacant table to start a new order, or press B to go back.");
+            var displayMessage = "Select a vacant table to start a new order";
             bool ValidSelectionMade = false;
             while (!ValidSelectionMade)
             {
-                selectedTable = Page<Table>.SelectFromPage(tables.Items, 1);
+                selectedTable = Page<Table>.SelectFromPage(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
                 if (selectedTable == null)
                     HomeMenu();
                 else if (!selectedTable.IsOccupied)
@@ -67,7 +66,7 @@ namespace RestaurantModel
                     Console.ReadKey();
                 }
             }
-            Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now?");
+            Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now? Y/N");
             if (InputParser.PromptForYesOrNo())
                 OrderAdditionMenu(startedOrder);
             else 
@@ -76,9 +75,8 @@ namespace RestaurantModel
 
         public void OrderManagementMenu(Repository<Table> tables)
         {
-            Console.Clear();
-            Console.WriteLine("Please choose a table:");
-            var selectedTable = Page<Table>.SelectFromPage(tables.Items, 1);
+            var displayMessage = "Please choose a table:";
+            var selectedTable = Page<Table>.SelectFromPage(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
             if (selectedTable == null)
                 HomeMenu();
             if (!selectedTable.IsOccupied)
@@ -123,7 +121,6 @@ namespace RestaurantModel
                 InputParser.PromptForAnyKey();
                 OrderManagementMenu(tables);
             }
-
             else if (selection == 'B')
             {
                 OrderManagementMenu(tables);
@@ -133,6 +130,7 @@ namespace RestaurantModel
         public void OrderAdditionMenu(Order targetOrder)
         {
             var page = new List<MenuItem>();
+            var displayMessage = "Please select an item from the list:";
 
             Console.Clear();
             Console.WriteLine("Select menu category:");
@@ -147,9 +145,9 @@ namespace RestaurantModel
             if (menuCategoryAnswer == 'B')
                 HomeMenu();
             else if (menuCategoryAnswer == '1')
-                selectedItem = Page<FoodMenuItem>.SelectFromPage(FoodRepo.Items, 1);
+                selectedItem = Page<FoodMenuItem>.SelectFromPage(FoodRepo.Items, displayMessage, FoodMenuItem.PageMenuHeaders);
             else if (menuCategoryAnswer == '2')
-                selectedItem = Page<DrinkMenuItem>.SelectFromPage(DrinksRepo.Items, 1);
+                selectedItem = Page<DrinkMenuItem>.SelectFromPage(DrinksRepo.Items, displayMessage, DrinkMenuItem.PageMenuHeaders);
             if (selectedItem == null)
                 OrderAdditionMenu(targetOrder);
             targetOrder.AddItemToOrder(selectedItem);
@@ -217,14 +215,3 @@ namespace RestaurantModel
         }
     }
 }
-
-// start new order
-    // print tables & status and ask to select a free one -- DONE
-// manage orders
-    // add items to order -- DONE
-    // remove item -- DONE (kinda)
-    // finish order -- DONE
-// view tables
-    // all table stats & order start date
-// view order history -- DONE
-// quit -- DONE

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace RestaurantModel
 {
-    public class Repository<T>
+    public class Repository<T> where T : IFetchable
     {
         public List<T> Items;
 
@@ -16,10 +16,10 @@ namespace RestaurantModel
             }
         }
 
-        public void AddRecord(IFetchable newEntry)
+        public void AddRecord(T newEntry)
         {
             Items.Add((T)newEntry);
-            FileReaderService.WriteJsonData(newEntry.DatabaseLocation, Items);
+            FileReaderService.WriteJsonData(IFetchable.DatabaseLocation, Items);
         }
 
         public List<T> LoadRecords(IFetchable objectCategory)

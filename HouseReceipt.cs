@@ -5,20 +5,26 @@ using Newtonsoft.Json;
 
 namespace RestaurantModel
 {
-    public class HouseReceipt : IEmailable, IFetchable
+    public class HouseReceipt : IEmailable, IFetchable, IPageDisplayable
     {
         public string Type { get; set; }
-        private string _databaseLocation = @"jsonData/orderHistory.json";
-        public string DatabaseLocation
+        [JsonIgnore]
+        static public string DatabaseLocation
         {
-            get
-            {
-                return _databaseLocation;
-            }
-            set
-            {
-                _databaseLocation = value;
-            }   
+            get { return SettingConstants.DrinkItemDatabaseLocation; }
+            set { }   
+        }
+        [JsonIgnore]
+        static public string[] PageMenuHeaders
+        {
+            get { return new string[] {"Order ID", "Time & date", "Price"}; }
+            set { }
+        }
+        [JsonIgnore]
+        static public string PageMenuSpacing
+        {
+            get { return "{0,-30} {1,10} {2,10}"; }
+            set { }
         }
 
         public Guid OrderId;
@@ -64,11 +70,6 @@ namespace RestaurantModel
 
         }
 
-        public override string ToString()
-        {
-            return $"ID: {OrderId} || Time: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")} || Price: {OrderTotalPrice}";
-        }
-
         public string GetFullDetails()
         {
             StringBuilder sb = new StringBuilder();
@@ -89,6 +90,11 @@ namespace RestaurantModel
         public List<HouseReceipt> FetchRecords<HouseReceipt>()
         {
             return FileReaderService.LoadJsonDataToList<HouseReceipt>(DatabaseLocation); 
+        }     
+
+        public override string ToString()
+        {
+            return $"{OrderId},{OrderStartDate.ToString("HH:mm dd/MM/yyyy")},{OrderTotalPrice}";
         }
     }
 }
