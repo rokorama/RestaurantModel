@@ -6,7 +6,6 @@ namespace RestaurantModel
 {
     public class Table : IFetchable, IPageDisplayable
     {
-        public string Type { get; set; }
         public int Number;
         public int Seats;
         public bool IsOccupied;

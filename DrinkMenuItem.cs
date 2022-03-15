@@ -6,7 +6,6 @@ namespace RestaurantModel
 {
     public class DrinkMenuItem : MenuItem, IFetchable, IPageDisplayable
     {
-        public string Type { get; set; }
         [JsonIgnore]
         static public string DatabaseLocation
         {

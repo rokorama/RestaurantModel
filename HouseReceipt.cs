@@ -7,7 +7,6 @@ namespace RestaurantModel
 {
     public class HouseReceipt : IEmailable, IFetchable, IPageDisplayable
     {
-        public string Type { get; set; }
         [JsonIgnore]
         static public string DatabaseLocation
         {
@@ -70,14 +69,16 @@ namespace RestaurantModel
 
         }
 
-        public string GetFullDetails()
+        public string PrintFullDetails()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Order {OrderId}");
             sb.AppendLine();
             sb.AppendLine($"Started at: {OrderStartDate.ToString("HH:mm dd/MM/yyyy")}");
             sb.AppendLine($"Finished at: {OrderFinishDate.ToString("HH:mm dd/MM/yyyy")}");
+            sb.AppendLine();
             sb.AppendLine($"Table {OrderTable}");
+            sb.AppendLine();
             OrderedItems.ForEach(x => sb.AppendLine(x.ToString()));
             sb.AppendLine();
             sb.AppendLine($"Order price: {OrderTotalPrice}");

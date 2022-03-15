@@ -66,7 +66,7 @@ namespace RestaurantModel
                     Console.ReadKey();
                 }
             }
-            Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now? Y/N");
+            Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now? (Y/N)");
             if (InputParser.PromptForYesOrNo())
                 OrderAdditionMenu(startedOrder);
             else 
@@ -209,9 +209,10 @@ namespace RestaurantModel
             if (selectedOrder == null)
                 HomeMenu();
             Console.Clear();
-            Console.WriteLine(selectedOrder.GetFullDetails());
+            Console.WriteLine(selectedOrder.PrintFullDetails());
             Console.WriteLine("Press any key to go back.");
             InputParser.PromptForAnyKey();
+            ViewOrderHistory();
         }
     }
 }

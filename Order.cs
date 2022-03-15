@@ -6,8 +6,8 @@ namespace RestaurantModel
 {
     public class Order
     {
-        public Guid OrderId;
         public string Type;
+        public Guid OrderId;
         public Table OrderTable;
         public List<MenuItem> OrderedItems;
         public DateTime OrderStartDate;
