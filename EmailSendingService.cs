@@ -16,9 +16,7 @@ namespace RestaurantModel
             email.Subject = $"Your receipt from {SettingConstants.RestaurantName}";
             email.Body = new TextPart(TextFormat.Html) { Text = messageBody };
 
-            //add error handling throughout
-
-            // send email
+            //Send email
             using var smtp = new SmtpClient();
             try
             {
@@ -30,9 +28,20 @@ namespace RestaurantModel
                 Console.WriteLine($"\nEmail successfully sent to {recipientAddress}\n");
                 System.Threading.Thread.Sleep(1000);
             }
-            catch // TODO - specify exceptions
+            catch (ArgumentNullException e)
             {
-                Console.WriteLine("Something went wrong with sending the email!");
+                Console.WriteLine($"An error occured with the message that's supposed to be sent out ({e.GetType().Name})");
+                System.Threading.Thread.Sleep(1000);
+            }
+            catch (MailKit.ServiceNotConnectedException e)
+            {
+                Console.WriteLine($"An error occured with connecting to the email server ({e.GetType().Name})");
+                System.Threading.Thread.Sleep(1000);
+            }
+            catch (MailKit.ServiceNotAuthenticatedException e)
+            {
+                Console.WriteLine($"An error occured with authenticating with the email server ({e.GetType().Name})");
+                System.Threading.Thread.Sleep(1000);
             }
         }
     }

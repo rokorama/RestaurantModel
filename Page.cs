@@ -89,7 +89,6 @@ namespace RestaurantModel
                     PrintPage(PageNumber < TotalPages ? PageNumber + 1 : TotalPages);
                 else if (inputPromptResult == 'B')
                     validSelectionMade = true;
-                else throw new ArgumentException("Error parsing input");
             }
             return result;
         }
