@@ -50,9 +50,11 @@ namespace RestaurantModel
             OrderStartDate = orderInfo.OrderStartDate;
             OrderFinishDate = orderInfo.OrderFinishDate;
             OrderTotalPrice = orderInfo.OrderTotalPrice;
+
             ValueAddedTax = SettingConstants.ValueAddedTax;
             TaxPaid = (OrderTotalPrice * ValueAddedTax) / 100;
             RevenueWithoutTax = OrderTotalPrice - TaxPaid;
+            
             SendClientReceiptByEmail = emailReceiptToClient;
             ClientReceiptEmailAddress = clientEmailAdress;
             SendHouseReceiptByEmail = emailReceiptToHouse;

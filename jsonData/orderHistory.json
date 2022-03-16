@@ -202,6 +202,32 @@
       "SendHouseReceiptByEmail": true,
       "ClientReceiptEmailAddress": null,
       "HouseReceiptEmailAddress": "hello@rokorama.com"
+    },
+    {
+      "OrderId": "521aa2e1-146a-44dd-9e59-4eefd4fd85e7",
+      "OrderTable": 3,
+      "OrderedItems": [
+        {
+          "$type": "RestaurantModel.DrinkMenuItem, RestaurantModel",
+          "Name": "Water (still) 1000 ml",
+          "Price": 2.4
+        },
+        {
+          "$type": "RestaurantModel.FoodMenuItem, RestaurantModel",
+          "Name": "Hummus with pita bread",
+          "Price": 5.5
+        }
+      ],
+      "OrderStartDate": "2022-03-16T19:58:15.426198+02:00",
+      "OrderFinishDate": "2022-03-16T19:59:25.272583+02:00",
+      "OrderTotalPrice": 7.9,
+      "RevenueWithoutTax": 6.162,
+      "ValueAddedTax": 22.0,
+      "TaxPaid": 1.738,
+      "SendClientReceiptByEmail": true,
+      "SendHouseReceiptByEmail": true,
+      "ClientReceiptEmailAddress": "criscruopos2@gmail.com",
+      "HouseReceiptEmailAddress": "hello@rokorama.com"
     }
   ]
 }
