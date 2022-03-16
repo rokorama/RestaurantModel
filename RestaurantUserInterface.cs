@@ -34,7 +34,7 @@ namespace RestaurantModel
             if (selection == '1')
                 StartNewOrder(TableRepo);
             else if (selection == '2')
-                OrderManagementMenu(TableRepo);
+                OrderManagementMenu();
             else if (selection == '3')
                 ViewOrderHistory();
             else if (selection == 'Q')
@@ -51,30 +51,34 @@ namespace RestaurantModel
             {
                 var pageToDisplay = new Page<Table>(tables.Items, pageDisplayMessage, Table.PageMenuHeaders, 1);
                 selectedTable = pageToDisplay.GetUserSelectionFromPage();
-                if (selectedTable == null)
-                    HomeMenu();
-                else if (!selectedTable.IsOccupied)
+                if (!selectedTable.IsOccupied)
                 {
                     startedOrder = selectedTable.AddOrder();
                     ValidSelectionMade = true;
                 }
+                else if (selectedTable == null)
+                    HomeMenu();
                 else
                 {  
-                    Console.WriteLine("\n\nError - this table is occupied, please select another one.");
+                    Console.WriteLine();
+                    Console.WriteLine("Error - this table is occupied, please select another one.");
+                    Console.WriteLine();
                     Console.ReadKey();
                 }
             }
-            Console.WriteLine($"\nNew order started at table {selectedTable.Number}. Would you like to add items now? (Y/N)");
+            Console.WriteLine();
+            Console.WriteLine($"New order started at table {selectedTable.Number}. Would you like to add items now? (Y/N)");
+            Console.WriteLine();
             if (InputParser.PromptForYesOrNo())
                 OrderAdditionMenu(startedOrder);
             else 
                 HomeMenu();
         }
 
-        public void OrderManagementMenu(Repository<Table> tables)
+        public void OrderManagementMenu()
         {
             var displayMessage = "Please choose a table:";
-            var pageToDisplay = new Page<Table>(tables.Items, displayMessage, Table.PageMenuHeaders, 1);
+            var pageToDisplay = new Page<Table>(TableRepo.Items, displayMessage, Table.PageMenuHeaders, 1);
             var selectedTable = pageToDisplay.GetUserSelectionFromPage();
 
             if (selectedTable == null)
@@ -84,7 +88,7 @@ namespace RestaurantModel
                     Console.WriteLine();
                     Console.WriteLine("No active order at this table. Press any key to retry");
                     InputParser.PromptForAnyKey();
-                    OrderManagementMenu(tables);
+                    OrderManagementMenu();
             }
             Console.Clear();
             Console.WriteLine($"TABLE {selectedTable.Number} - MENU");
@@ -101,14 +105,9 @@ namespace RestaurantModel
             {
                 OrderAdditionMenu(selectedTable.ActiveOrder);
             }
-            else if (selection == 'R') // refactor into ItemRemovalMenu()?
+            else if (selection == 'R')
             {
-                var pageDisplayMessage = "Select the item you wish to remove";
-                var removalMenuPage = new Page<MenuItem>(selectedTable.ActiveOrder.OrderedItems, pageDisplayMessage);
-                var itemToRemove = removalMenuPage.GetUserSelectionFromPage();
-                if (itemToRemove == null)
-                    OrderManagementMenu(tables);
-                selectedTable.ActiveOrder.OrderedItems.Remove(itemToRemove);
+                ItemRemovalMenu(selectedTable.ActiveOrder);
             }
             else if (selection == 'F')
             {
@@ -116,22 +115,26 @@ namespace RestaurantModel
             }
             else if (selection == 'V')
             {
-                Console.Clear();
-                Console.WriteLine(selectedTable.ActiveOrder.ToString());
-                Console.WriteLine();
-                Console.WriteLine("Press any key to go back");
-                InputParser.PromptForAnyKey();
-                OrderManagementMenu(tables);
+                ViewActiveOrderDetails(selectedTable.ActiveOrder);
             }
             else if (selection == 'B')
             {
-                OrderManagementMenu(tables);
+                OrderManagementMenu();
             }
+        }
+
+        public void ViewActiveOrderDetails(Order targetOrder)
+        {
+            var currentOrderItemPage = new Page<MenuItem>(targetOrder.OrderedItems, 
+                                                          $"Table {targetOrder.OrderTable.Number} || " +
+                                                          $"Started at {targetOrder.OrderStartDate.ToString("HH:mm")} || " +
+                                                          $"Price so far: {targetOrder.OrderTotalPrice}");
+            InputParser.PromptForAnyKey();
+            OrderManagementMenu();
         }
 
         public void OrderAdditionMenu(Order targetOrder)
         {
-            // var pageToDisplay = default(Page<MenuItem>);
             var pageDisplayMessage = "Please select an item from the list:";
 
             Console.Clear();
@@ -151,7 +154,6 @@ namespace RestaurantModel
                 var pageToDisplay = new Page<FoodMenuItem>(FoodRepo.Items, pageDisplayMessage, FoodMenuItem.PageMenuHeaders, 1);
                 selectedItem = pageToDisplay.GetUserSelectionFromPage();
             }
-
             else if (menuCategoryAnswer == '2')
             {
                 var pageToDisplay = new Page<DrinkMenuItem>(DrinksRepo.Items, pageDisplayMessage, DrinkMenuItem.PageMenuHeaders, 1);
@@ -166,11 +168,33 @@ namespace RestaurantModel
             OrderAdditionMenu(targetOrder);
         }
 
+        public void ItemRemovalMenu(Order currentOrder)
+        {
+            var pageDisplayMessage = "Select the item you wish to remove";
+            var removalMenuPage = new Page<MenuItem>(currentOrder.OrderedItems, pageDisplayMessage);
+            var itemToRemove = removalMenuPage.GetUserSelectionFromPage();
+            if (itemToRemove == null)
+                OrderManagementMenu();
+            Console.WriteLine();
+            Console.WriteLine("Remove item from order? (Y/N)");
+            var confirmItemRemoval = InputParser.PromptForYesOrNo();
+            if (confirmItemRemoval)
+            {
+                currentOrder.OrderedItems.Remove(itemToRemove);
+                Console.WriteLine();
+                Console.WriteLine($"{itemToRemove.Name} removed from the order.");
+                Console.WriteLine();
+                InputParser.PromptForAnyKey();
+            }
+            else
+                ItemRemovalMenu(currentOrder);
+        }
+
         public void FinaliseOrderMenu(Order orderToFinalise) // TODO - move into Order class
         {
             Console.WriteLine("\n\nFinalise this order? Press Y for yes, N for no:");
             if (!InputParser.PromptForYesOrNo())
-                OrderManagementMenu(TableRepo);
+                OrderManagementMenu();
 
             Console.WriteLine("\n\nPrint client receipt?");
             if (InputParser.PromptForYesOrNo())
@@ -208,11 +232,14 @@ namespace RestaurantModel
             var selectedOrder = orderHistoryPage.GetUserSelectionFromPage();
             if (selectedOrder == null)
                 HomeMenu();
-            Console.Clear();
-            Console.WriteLine(selectedOrder.PrintFullDetails());
-            Console.WriteLine("Press any key to go back.");
-            InputParser.PromptForAnyKey();
-            ViewOrderHistory();
+            else
+            {
+                Console.Clear();
+                Console.WriteLine(selectedOrder.PrintFullDetails());
+                Console.WriteLine("Press any key to go back.");
+                InputParser.PromptForAnyKey();
+                ViewOrderHistory();
+            }
         }
 
         public void QuitProgramScreen()

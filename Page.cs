@@ -31,7 +31,7 @@ namespace RestaurantModel
             TotalPages = (int)Math.Ceiling((decimal)AllItemsInRepo.Count / (decimal)PageSize);
             DisplayMessage = displayMessage;
 
-            // Generate headers above list items spacing for the entire list
+            // Generate headers above list items and spacing between columns
             var objectProperties = sourceList.GetType().GetGenericArguments()[0].GetProperties();
             ObjectHeaders = (string[])objectProperties.Single(x => x.Name == "PageMenuHeaders")
                                                 .GetValue("PageMenuHeaders");
@@ -39,23 +39,29 @@ namespace RestaurantModel
                                                 .GetValue("PageMenuSpacing"); // 
                                                 
             PrintPage(PageNumber);
-            
         }
         static internal void PrintPage(int pageNumber)
         {
-            PageItems = AllItemsInRepo.Skip((pageNumber - 1) * PageSize).Take(PageSize).ToList();
+            PageNumber = pageNumber;
+            PageItems = AllItemsInRepo.Skip((PageNumber - 1) * PageSize).Take(PageSize).ToList();
 
-            // Print page to console
+            // Print page items to console
             Console.Clear();
             if (DisplayMessage != null)
             {
                 Console.WriteLine(DisplayMessage);
                 Console.WriteLine();
             }
-            Console.WriteLine($"Page {PageNumber} of {TotalPages}\n");
+            if (TotalPages != 0)
+                Console.WriteLine($"Page {PageNumber} of {TotalPages}\n");
             Console.WriteLine("   " + String.Format(ObjectSpacing, ObjectHeaders)); //Spaces in beginning of string to account for item enumeration below
             Console.WriteLine();
-            PageItems.ForEach(x => Console.WriteLine($"{PageItems.IndexOf(x) + 1}. {x.ToString()}"));
+            if (PageItems.Count == 0)
+                Console.WriteLine("\n\t** No items to display! **\n");
+            else
+                PageItems.ForEach(x => Console.WriteLine($"{PageItems.IndexOf(x) + 1}. {x.ToString()}"));
+
+            // List out available navigation options
             Console.WriteLine();
             if (PageNumber != 1 && TotalPages > 1)
                 Console.WriteLine("Press , to see previous page");
@@ -63,44 +69,29 @@ namespace RestaurantModel
                 Console.WriteLine("Press . to see next page");
             Console.WriteLine("Press B to go back");
             Console.WriteLine();
-
-            // Parse and react to user input - move into separate method?
-            // var inputPromptResult = InputParser.PromptCharFromUser(PageItems, ',', '.', 'B');
-            // if (Char.IsNumber(inputPromptResult))
-            //     return PageItems[InputParser.GetIntFromChar(inputPromptResult) - 1];
-            // else if (inputPromptResult == ',')
-            // {
-            //     PageNavigationInterface(list, DisplayMessage, IPageDisplayable.PageMenuHeaders, pageNumber > 1 ? pageNumber - 1 : 1);
-            //     return default(T);
-            // }
-            // else if (inputPromptResult == '.')
-            // {
-            //     PageNavigationInterface(list, DisplayMessage, IPageDisplayable.PageMenuHeaders, pageNumber < TotalPages ? pageNumber + 1 : TotalPages);
-            //     return default(T);
-            // }
-            // else if (inputPromptResult == 'B')
-            //     return default(T);
-            // else throw new ArgumentException("Error parsing input");
         }
 
         public T GetUserSelectionFromPage()
         {
-            var inputPromptResult = InputParser.PromptCharFromUser(PageItems, ',', '.', 'B');
-            if (Char.IsNumber(inputPromptResult))
-                return PageItems[InputParser.GetIntFromChar(inputPromptResult) - 1];
-            else if (inputPromptResult == ',')
+            var result = default(T);
+            bool validSelectionMade = false;
+            while (!validSelectionMade)
             {
-                PrintPage(PageNumber > 1 ? PageNumber - 1 : 1);
-                return default(T);
+                var inputPromptResult = InputParser.PromptCharFromUser(PageItems, ',', '.', 'B');
+                if (Char.IsNumber(inputPromptResult))
+                {
+                    result = PageItems[InputParser.GetIntFromChar(inputPromptResult) - 1];
+                    validSelectionMade = true;
+                }
+                else if (inputPromptResult == ',')
+                    PrintPage(PageNumber > 1 ? PageNumber - 1 : 1);
+                else if (inputPromptResult == '.')
+                    PrintPage(PageNumber < TotalPages ? PageNumber + 1 : TotalPages);
+                else if (inputPromptResult == 'B')
+                    validSelectionMade = true;
+                else throw new ArgumentException("Error parsing input");
             }
-            else if (inputPromptResult == '.')
-            {
-                PrintPage(PageNumber < TotalPages ? PageNumber + 1 : TotalPages);
-                return default(T);
-            }
-            else if (inputPromptResult == 'B')
-                return default(T);
-            else throw new ArgumentException("Error parsing input");
+            return result;
         }
     }
 }

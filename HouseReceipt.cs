@@ -7,6 +7,22 @@ namespace RestaurantModel
 {
     public class HouseReceipt : IEmailable, IFetchable, IPageDisplayable
     {
+        public Guid OrderId;
+        public int OrderTable;
+        public List<MenuItem> OrderedItems;
+        public DateTime OrderStartDate;
+        public DateTime OrderFinishDate;
+        public decimal OrderTotalPrice;
+        public decimal RevenueWithoutTax;
+        public decimal ValueAddedTax;
+        public decimal TaxPaid;
+        public bool SendClientReceiptByEmail;
+        public bool SendHouseReceiptByEmail;
+        #nullable enable
+        public string? ClientReceiptEmailAddress = null;
+        public string? HouseReceiptEmailAddress = null;
+        #nullable disable
+
         [JsonIgnore]
         static public string DatabaseLocation
         {
@@ -26,22 +42,6 @@ namespace RestaurantModel
             set { }
         }
 
-        public Guid OrderId;
-        public int OrderTable;
-        public List<MenuItem> OrderedItems;
-        public DateTime OrderStartDate;
-        public DateTime OrderFinishDate;
-        public decimal OrderTotalPrice;
-        public decimal RevenueWithoutTax;
-        public decimal ValueAddedTax;
-        public decimal TaxPaid;
-        public bool SendClientReceiptByEmail;
-        public bool SendHouseReceiptByEmail;
-        #nullable enable
-        public string? ClientReceiptEmailAddress = null;
-        public string? HouseReceiptEmailAddress = null;
-        #nullable disable
-
         public HouseReceipt(Order orderInfo, bool emailReceiptToClient, string clientEmailAdress, bool emailReceiptToHouse, string houseEmailAdress)
         {
             OrderId = orderInfo.OrderId;
@@ -50,11 +50,10 @@ namespace RestaurantModel
             OrderStartDate = orderInfo.OrderStartDate;
             OrderFinishDate = orderInfo.OrderFinishDate;
             OrderTotalPrice = orderInfo.OrderTotalPrice;
-
+            
             ValueAddedTax = SettingConstants.ValueAddedTax;
             TaxPaid = (OrderTotalPrice * ValueAddedTax) / 100;
             RevenueWithoutTax = OrderTotalPrice - TaxPaid;
-            
             SendClientReceiptByEmail = emailReceiptToClient;
             ClientReceiptEmailAddress = clientEmailAdress;
             SendHouseReceiptByEmail = emailReceiptToHouse;
@@ -94,6 +93,7 @@ namespace RestaurantModel
             sb.AppendLine($"Finished at: {OrderFinishDate.ToString("HH:mm dd/MM/yyyy")}");
             sb.AppendLine();
             sb.AppendLine($"Table {OrderTable}");
+            sb.AppendLine();
             OrderedItems.ForEach(x => sb.AppendLine(x.ToString()));
             sb.AppendLine();
             sb.AppendLine($"Order price: {OrderTotalPrice}");
@@ -110,7 +110,6 @@ namespace RestaurantModel
 
         public override string ToString()
         {
-
             return String.Format(PageMenuSpacing,
                                  OrderId, 
                                  OrderStartDate.ToString("HH:mm dd/MM/yyyy"),

@@ -52,6 +52,11 @@ namespace RestaurantModel
 
         }
 
+        public void ViewDetails()
+        {
+            
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

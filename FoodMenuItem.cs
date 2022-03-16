@@ -14,14 +14,14 @@ namespace RestaurantModel
         }
 
         [JsonIgnore]
-        static public string[] PageMenuHeaders
+        new static public string[] PageMenuHeaders
         {
             get { return new string[] {"Item name", "Price (Euros)"}; }
             set { }
         }
         
         [JsonIgnore]
-        static public string PageMenuSpacing
+       new static public string PageMenuSpacing
         {
             get { return "{0,-30} {1,10}"; }
             set { }
