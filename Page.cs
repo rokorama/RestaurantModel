@@ -71,7 +71,7 @@ namespace RestaurantModel
             Console.WriteLine();
         }
 
-        public T GetUserSelectionFromPage()
+        public T ProcessUserInput()
         {
             var result = default(T);
             bool validSelectionMade = false;

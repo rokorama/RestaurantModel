@@ -50,14 +50,14 @@ namespace RestaurantModel
             while (!ValidSelectionMade)
             {
                 var pageToDisplay = new Page<Table>(tables.Items, pageDisplayMessage, Table.PageMenuHeaders, 1);
-                selectedTable = pageToDisplay.GetUserSelectionFromPage();
-                if (!selectedTable.IsOccupied)
+                selectedTable = pageToDisplay.ProcessUserInput();
+                if (selectedTable == null)
+                    HomeMenu();
+                else if (!selectedTable.IsOccupied)
                 {
                     startedOrder = selectedTable.AddOrder();
                     ValidSelectionMade = true;
                 }
-                else if (selectedTable == null)
-                    HomeMenu();
                 else
                 {  
                     Console.WriteLine();
@@ -79,7 +79,7 @@ namespace RestaurantModel
         {
             var displayMessage = "Please choose a table:";
             var pageToDisplay = new Page<Table>(TableRepo.Items, displayMessage, Table.PageMenuHeaders, 1);
-            var selectedTable = pageToDisplay.GetUserSelectionFromPage();
+            var selectedTable = pageToDisplay.ProcessUserInput();
 
             if (selectedTable == null)
                 HomeMenu();
@@ -152,12 +152,12 @@ namespace RestaurantModel
             else if (menuCategoryAnswer == '1')
             {
                 var pageToDisplay = new Page<FoodMenuItem>(FoodRepo.Items, pageDisplayMessage, FoodMenuItem.PageMenuHeaders, 1);
-                selectedItem = pageToDisplay.GetUserSelectionFromPage();
+                selectedItem = pageToDisplay.ProcessUserInput();
             }
             else if (menuCategoryAnswer == '2')
             {
                 var pageToDisplay = new Page<DrinkMenuItem>(DrinksRepo.Items, pageDisplayMessage, DrinkMenuItem.PageMenuHeaders, 1);
-                selectedItem = pageToDisplay.GetUserSelectionFromPage();
+                selectedItem = pageToDisplay.ProcessUserInput();
             } 
             if (selectedItem == null)
                 OrderAdditionMenu(targetOrder);
@@ -172,7 +172,7 @@ namespace RestaurantModel
         {
             var pageDisplayMessage = "Select the item you wish to remove";
             var removalMenuPage = new Page<MenuItem>(currentOrder.OrderedItems, pageDisplayMessage);
-            var itemToRemove = removalMenuPage.GetUserSelectionFromPage();
+            var itemToRemove = removalMenuPage.ProcessUserInput();
             if (itemToRemove == null)
                 OrderManagementMenu();
             Console.WriteLine();
@@ -229,7 +229,7 @@ namespace RestaurantModel
         public void ViewOrderHistory()
         {
             var orderHistoryPage = new Page<HouseReceipt>(HouseReceiptRepo.Items);
-            var selectedOrder = orderHistoryPage.GetUserSelectionFromPage();
+            var selectedOrder = orderHistoryPage.ProcessUserInput();
             if (selectedOrder == null)
                 HomeMenu();
             else
